@@ -67,6 +67,32 @@ class LaporDiri extends Model
     ];
 
     /**
+     * Boot method untuk model events
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Event ketika lapor diri dibuat, buat record verifikasi otomatis
+        static::created(function ($laporDiri) {
+            $laporDiri->createVerifikasiRecord();
+        });
+    }
+
+    /**
+     * Method untuk membuat record verifikasi
+     */
+    public function createVerifikasiRecord()
+    {
+        return $this->verifikasi()->create([
+            'status' => 'diproses',
+            'verifikator' => null,
+            'komentar' => null,
+            'tanggal_verifikasi' => null,
+        ]);
+    }
+
+    /**
      * Relasi ke User
      */
     public function user()

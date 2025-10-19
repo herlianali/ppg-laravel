@@ -29,16 +29,14 @@ Route::middleware(['auth'])->group(function () {
         })->name('masterdata.index');
 
         Route::get('/setting', function () {
-            // return view('setting.index');
-            // sementara nanti bakalan dropdown
             return redirect()->route('admin.menus.index');
         })->name('setting.index');
 
         // Admin bisa lihat semua data lapor diri
         Route::get('/lapor/admin', [LaporDiriController::class, 'index'])->name('lapor.admin.index');
-        Route::middleware(['auth', 'administrator'])->prefix('admin')->name('admin.')->group(function () {
+        
+        Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class);
-            
             // Routes untuk status menu
             Route::post('menus/{menu}/toggle-status', [\App\Http\Controllers\Admin\MenuController::class, 'toggleStatus'])
                 ->name('menus.toggle-status');
@@ -62,16 +60,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/lapor/verifikator', [LaporDiriController::class, 'list'])->name('lapor.verifikator.index');
     });
 
-    // ========== ROUTES UNTUK USER BIASA ==========
-    Route::middleware(['mahasiswa'])->group(function () {
-        // Lapor Diri - hanya user biasa yang bisa buat/edit
+    // ========== ROUTES UNTUK USER BIASA (MAHASISWA) ==========
+    Route::middleware(['mahasiswa_or_verifikator'])->group(function () {
+        // Route CREATE harus didefinisikan sebelum route dengan parameter {id}
         Route::get('/lapor/create', [LaporDiriController::class, 'create'])->name('lapor.create');
         Route::post('/lapor', [LaporDiriController::class, 'store'])->name('lapor.store');
+        
+        // Route dengan parameter {id}
+        Route::get('/lapor/{id}', [LaporDiriController::class, 'show'])->name('lapor.show');
         Route::get('/lapor/{id}/edit', [LaporDiriController::class, 'edit'])->name('lapor.edit');
         Route::put('/lapor/{id}', [LaporDiriController::class, 'update'])->name('lapor.update');
         Route::delete('/lapor/{id}', [LaporDiriController::class, 'destroy'])->name('lapor.destroy');
 
-        // User biasa hanya bisa lihat data sendiri
+        // Data pribadi
         Route::get('/lapor/my', [LaporDiriController::class, 'myData'])->name('lapor.my.index');
         Route::get('/lapor/my/{id}', [LaporDiriController::class, 'showMyData'])->name('lapor.my.show');
     });

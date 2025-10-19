@@ -21,7 +21,20 @@
                 </div>
 
                 <div class="card-body mt-4">
-                    <!-- ... alert messages ... -->
+                    <!-- Alert Messages -->
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
                     <!-- Filter dan Search -->
                     <div class="row mb-4">
@@ -67,88 +80,88 @@
                             </thead>
                             <tbody>
                                 @forelse($lapor as $item)
-                                    <tr>
-                                        <td class="text-center">
-                                            {{ $loop->iteration + ($lapor->currentPage() - 1) * $lapor->perPage() }}
-                                        </td>
-                                        <td>
-                                            <div class="fw-semibold">{{ $item->nama_lengkap }}</div>
-                                            <small
-                                                class="text-muted">{{ $item->nuptk ? 'NUPTK: ' . $item->nuptk : 'Tidak ada NUPTK' }}</small>
-                                        </td>
-                                        <td>
-                                            <a href="mailto:{{ $item->email }}" class="text-decoration-none">
-                                                {{ $item->email }}
-                                            </a>
-                                        </td>
-                                        <td>{{ $item->no_hp ?? '-' }}</td>
-                                        <td>
-                                            @if ($item->asal_pt)
-                                                <span class="badge bg-info">{{ Str::limit($item->asal_pt, 20) }}</span>
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @php
-                                                $statusConfig = [
-                                                    'diproses' => ['bg-secondary', 'fas fa-clock', 'Diproses'],
-                                                    'diterima' => ['bg-success', 'fas fa-check', 'Diterima'],
-                                                    'ditolak' => ['bg-danger', 'fas fa-times', 'Ditolak'],
-                                                    'revisi' => [
-                                                        'bg-warning',
-                                                        'fas fa-exclamation-triangle',
-                                                        'Perlu Revisi',
-                                                    ],
-                                                ];
-                                                $status = $item->status_verifikasi;
-                                                $config = $statusConfig[$status] ?? $statusConfig['diproses'];
-                                            @endphp
-                                            <span class="badge {{ $config[0] }}">
-                                                <i class="{{ $config[1] }} me-1"></i>{{ $config[2] }}
-                                            </span>
-                                            @if ($item->tanggal_verifikasi)
-                                                <br>
+                                    @if($item->laporDiri) {{-- Pastikan relasi ada --}}
+                                        <tr>
+                                            <td class="text-center">
+                                                {{ $loop->iteration + ($lapor->currentPage() - 1) * $lapor->perPage() }}
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold">{{ $item->laporDiri->nama_lengkap }}</div>
                                                 <small class="text-muted">
-                                                    {{ $item->tanggal_verifikasi->format('d M Y') }}
+                                                    {{ $item->laporDiri->nuptk ? 'NUPTK: ' . $item->laporDiri->nuptk : 'Tidak ada NUPTK' }}
                                                 </small>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                {{ $item->created_at->format('d M Y') }}<br>
-                                                <span class="text-muted">{{ $item->created_at->format('H:i') }}</span>
-                                            </small>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('lapor.show', $item->id) }}" class="btn btn-info"
-                                                    title="Lihat Detail">
-                                                    <i class="fas fa-eye"></i>
+                                            </td>
+                                            <td>
+                                                <a href="mailto:{{ $item->laporDiri->email }}" class="text-decoration-none">
+                                                    {{ $item->laporDiri->email }}
                                                 </a>
-                                                <a href="{{ route('lapor.edit', $item->id) }}" class="btn btn-warning"
-                                                    title="Edit Data">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-primary btn-verifikasi"
-                                                    data-id="{{ $item->id }}" data-nama="{{ $item->nama_lengkap }}"
-                                                    data-status="{{ $item->status_verifikasi }}"
-                                                    data-komentar="{{ $item->komentar_verifikasi ?? '' }}"
-                                                    title="Verifikasi Data">
-                                                    <i class="fas fa-clipboard-check"></i>
-                                                </button>
-                                                <form action="{{ route('lapor.destroy', $item->id) }}" method="POST"
-                                                    class="d-inline"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_lengkap }}?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger" title="Hapus Data">
-                                                        <i class="fas fa-trash"></i>
+                                            </td>
+                                            <td>{{ $item->laporDiri->no_hp ?? '-' }}</td>
+                                            <td>
+                                                @if ($item->laporDiri->asal_pt)
+                                                    <span class="badge bg-info">{{ Str::limit($item->laporDiri->asal_pt, 20) }}</span>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @php
+                                                    $statusConfig = [
+                                                        'diproses' => ['bg-secondary', 'fas fa-clock', 'Diproses'],
+                                                        'diterima' => ['bg-success', 'fas fa-check', 'Diterima'],
+                                                        'ditolak' => ['bg-danger', 'fas fa-times', 'Ditolak'],
+                                                        'revisi' => ['bg-warning', 'fas fa-exclamation-triangle', 'Perlu Revisi'],
+                                                    ];
+                                                    $status = $item->status;
+                                                    $config = $statusConfig[$status] ?? $statusConfig['diproses'];
+                                                @endphp
+                                                <span class="badge {{ $config[0] }}">
+                                                    <i class="{{ $config[1] }} me-1"></i>{{ $config[2] }}
+                                                </span>
+                                                @if ($item->tanggal_verifikasi)
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        {{ \Carbon\Carbon::parse($item->tanggal_verifikasi)->format('d M Y') }}
+                                                    </small>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ $item->laporDiri->created_at->format('d M Y') }}<br>
+                                                    <span class="text-muted">{{ $item->laporDiri->created_at->format('H:i') }}</span>
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{{ route('lapor.show', $item->lapor_diri_id) }}" class="btn btn-info"
+                                                        title="Lihat Detail">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('lapor.edit', $item->lapor_diri_id) }}" class="btn btn-warning"
+                                                        title="Edit Data">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-primary btn-verifikasi"
+                                                        data-id="{{ $item->lapor_diri_id }}" 
+                                                        data-nama="{{ $item->laporDiri->nama_lengkap }}"
+                                                        data-status="{{ $item->status }}"
+                                                        data-komentar="{{ $item->komentar ?? '' }}"
+                                                        title="Verifikasi Data">
+                                                        <i class="fas fa-clipboard-check"></i>
                                                     </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                    <form action="{{ route('lapor.destroy', $item->lapor_diri_id) }}" method="POST"
+                                                        class="d-inline"
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->laporDiri->nama_lengkap }}?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger" title="Hapus Data">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @empty
                                     <tr>
                                         <td colspan="8" class="text-center py-4">
@@ -164,7 +177,17 @@
                         </table>
                     </div>
 
-                    <!-- ... pagination dan summary ... -->
+                    <!-- Pagination -->
+                    @if($lapor->hasPages())
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div class="text-muted">
+                                Menampilkan {{ $lapor->firstItem() }} - {{ $lapor->lastItem() }} dari {{ $lapor->total() }} data
+                            </div>
+                            <div>
+                                {{ $lapor->links() }}
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -192,8 +215,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Status Verifikasi <span
-                                            class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">Status Verifikasi <span class="text-danger">*</span></label>
                                     <select name="status" class="form-select" required id="statusVerifikasi">
                                         <option value="diproses">Diproses</option>
                                         <option value="diterima">Diterima</option>
@@ -205,9 +227,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Tanggal Verifikasi</label>
-                                    <input type="text" class="form-control" value="{{ now()->format('d F Y H:i') }}"
-                                        readonly>
-                                    <input type="hidden" name="tanggal_verifikasi" value="{{ now() }}">
+                                    <input type="text" class="form-control" value="{{ now()->format('d F Y H:i') }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -267,47 +287,10 @@
             margin: 0 2px;
         }
 
-        .card .card-body h4 {
-            margin-bottom: 0.25rem;
-            font-weight: bold;
-        }
-
         .table-hover tbody tr:hover {
             background-color: rgba(13, 110, 253, 0.05);
             transform: translateY(-1px);
             transition: all 0.2s ease;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-        }
-
-        .pagination .page-link {
-            color: #0d6efd;
-            border-color: #dee2e6;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-
-        /* Status badge colors */
-        .bg-diproses {
-            background-color: #6c757d !important;
-        }
-
-        .bg-diterima {
-            background-color: #198754 !important;
-        }
-
-        .bg-ditolak {
-            background-color: #dc3545 !important;
-        }
-
-        .bg-revisi {
-            background-color: #ffc107 !important;
-            color: #000 !important;
         }
     </style>
 
@@ -338,7 +321,7 @@
                     const status = this.getAttribute('data-status');
                     const komentar = this.getAttribute('data-komentar');
 
-                    // Set form action
+                    // Set form action - PERBAIKI ROUTE INI
                     verifikasiForm.action = `/lapor/${id}/verifikasi`;
 
                     // Set nilai form
@@ -435,15 +418,6 @@
                 searchInput.value = '';
                 statusFilter.value = '';
                 filterTable();
-            });
-
-            // Auto-hide alerts after 5 seconds
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 5000);
             });
         });
     </script>

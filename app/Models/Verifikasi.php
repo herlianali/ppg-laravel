@@ -55,13 +55,14 @@ class Verifikasi extends Model
     }
 
     /**
-     * Method untuk melakukan verifikasi
+     * Method untuk melakukan verifikasi (update status)
      */
-    public static function verifikasiData($laporDiriId, $status, $komentar = null, $verifikator = null)
+    public static function updateVerifikasi($laporDiriId, $status, $komentar = null, $verifikator = null)
     {
         $verifikasi = self::where('lapor_diri_id', $laporDiriId)->first();
         
         if (!$verifikasi) {
+            // Jika tidak ada record, buat baru
             $verifikasi = new self();
             $verifikasi->lapor_diri_id = $laporDiriId;
         }

@@ -10,12 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class VerifikasiController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('can:verifikasi')->only(['verifikasi', 'listVerifikasi']);
-    }
-
     /**
      * Proses Verifikasi
      */
@@ -34,22 +28,28 @@ class VerifikasiController extends Controller
         try {
             DB::beginTransaction();
 
+            // Cari data lapor diri
             $laporDiri = LaporDiri::findOrFail($id);
 
             // Cari atau buat data verifikasi
             $verifikasi = Verifikasi::firstOrNew(['lapor_diri_id' => $id]);
-
+            
             $verifikasi->status = $request->status;
             $verifikasi->komentar = $request->komentar;
             $verifikasi->verifikator = Auth::user()->name;
             $verifikasi->tanggal_verifikasi = now();
-
             $verifikasi->save();
+
+            // Update status verifikasi di tabel lapor_diri juga (jika ada kolomnya)
+            // Jika tidak ada, hapus bagian ini
+            // $laporDiri->status_verifikasi = $request->status;
+            $laporDiri->save();
 
             DB::commit();
 
-            return redirect()->route('lapor.index')
+            return redirect()->route('verifikasi.index')
                 ->with('success', 'Data berhasil diverifikasi!');
+                
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -67,10 +67,13 @@ class VerifikasiController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $verifikasi = Verifikasi::with('laporDiri')
+        // Query yang benar untuk mengambil data
+        $lapor = Verifikasi::with(['laporDiri' => function($query) {
+                $query->select('id', 'nama_lengkap', 'email', 'no_hp', 'asal_pt', 'nuptk', 'created_at');
+            }])
             ->latest()
             ->paginate(10);
-
-        return view('formPPGMhs.verifikasi_index', compact('verifikasi'));
+            
+        return view('formPPGMhs.list', compact('lapor'));
     }
 }

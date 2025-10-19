@@ -156,7 +156,7 @@ class LaporDiriController extends Controller
 
         Log::info('Memulai validasi...');
 
-         try {
+        try {
             $validator = Validator::make($request->all(), $validationRules);
 
             if ($validator->fails()) {
@@ -211,6 +211,9 @@ class LaporDiriController extends Controller
                 $laporDiri = LaporDiri::create($data);
                 Log::info('Data berhasil disimpan dengan ID: ' . $laporDiri->id);
 
+                // $this->createVerifikasiRecord($laporDiri->id);
+                // Log::info('Record verifikasi berhasil dibuat untuk lapor diri ID: ' . $laporDiri->id);
+
                 // Commit transaction
                 DB::commit();
                 Log::info('Database transaction committed!');
@@ -260,9 +263,9 @@ class LaporDiriController extends Controller
         $lapor = LaporDiri::findOrFail($id);
         
         // Cek apakah user boleh melihat data ini
-        if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
-            abort(403, 'Anda hanya dapat melihat data sendiri.');
-        }
+        // if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
+        //     abort(403, 'Anda hanya dapat melihat data sendiri.');
+        // }
         
         return view('formPPGMhs.show', compact('lapor'));
     }
@@ -532,4 +535,26 @@ class LaporDiriController extends Controller
 
         return 'Log file tidak ditemukan';
     }
+
+    // /**
+    //  * Method untuk membuat record verifikasi otomatis
+    //  */
+    // private function createVerifikasiRecord($laporDiriId)
+    // {
+    //     try {
+    //         $verifikasi = new Verifikasi();
+    //         $verifikasi->lapor_diri_id = $laporDiriId;
+    //         $verifikasi->status = 'diproses';
+    //         $verifikasi->verifikator = null;
+    //         $verifikasi->komentar = null;
+    //         $verifikasi->tanggal_verifikasi = null;
+    //         $verifikasi->save();
+
+    //         Log::info('Record verifikasi berhasil dibuat: ' . $verifikasi->id);
+    //         return $verifikasi;
+    //     } catch (\Exception $e) {
+    //         Log::error('Gagal membuat record verifikasi: ' . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
 }

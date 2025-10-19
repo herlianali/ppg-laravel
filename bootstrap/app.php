@@ -35,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'administrator' => \App\Http\Middleware\CheckAdministrator::class,
             'verifikator' => \App\Http\Middleware\CheckVerifikator::class,
             'mahasiswa' => \App\Http\Middleware\CheckMahasiswa::class,
+            'mahasiswa_or_verifikator' => \App\Http\Middleware\MahasiswaOrVerifikator::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
