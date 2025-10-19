@@ -12,6 +12,9 @@ class LaporDiri extends Model
     protected $table = 'lapor_diris';
 
     protected $fillable = [
+        // Relasi user
+        'user_id',
+
         // Step 1: Biodata
         'nama_lengkap',
         'tempat_lahir',
@@ -64,6 +67,14 @@ class LaporDiri extends Model
     ];
 
     /**
+     * Relasi ke User
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Relasi ke Verifikasi
      */
     public function verifikasi()
@@ -101,5 +112,72 @@ class LaporDiri extends Model
     public function getVerifikatorAttribute()
     {
         return $this->verifikasi ? $this->verifikasi->verifikator : null;
+    }
+
+    /**
+     * Accessor untuk status label dengan Bootstrap class
+     */
+    public function getStatusLabelAttribute()
+    {
+        $status = $this->status_verifikasi;
+        
+        $labels = [
+            'diproses' => ['label' => 'Diproses', 'class' => 'warning'],
+            'diterima' => ['label' => 'Diterima', 'class' => 'success'],
+            'ditolak' => ['label' => 'Ditolak', 'class' => 'danger'],
+            'revisi' => ['label' => 'Perlu Revisi', 'class' => 'info'],
+        ];
+
+        return $labels[$status] ?? ['label' => 'Diproses', 'class' => 'secondary'];
+    }
+
+    /**
+     * Scope untuk data milik user tertentu
+     */
+    public function scopeMilikUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    /**
+     * Scope untuk data yang sudah diterima
+     */
+    public function scopeDiterima($query)
+    {
+        return $query->whereHas('verifikasi', function($q) {
+            $q->where('status', 'diterima');
+        });
+    }
+
+    /**
+     * Scope untuk data yang ditolak
+     */
+    public function scopeDitolak($query)
+    {
+        return $query->whereHas('verifikasi', function($q) {
+            $q->where('status', 'ditolak');
+        });
+    }
+
+    /**
+     * Scope untuk data yang menunggu verifikasi (diproses)
+     */
+    public function scopeMenungguVerifikasi($query)
+    {
+        return $query->where(function($q) {
+            $q->whereHas('verifikasi', function($subQ) {
+                $subQ->where('status', 'diproses');
+            })->orDoesntHave('verifikasi');
+        });
+    }
+
+    /**
+     * Scope untuk data yang perlu revisi
+     */
+    public function scopePerluRevisi($query)
+    {
+        return $query->whereHas('verifikasi', function($q) {
+            $q->where('status', 'revisi');
+        });
     }
 }

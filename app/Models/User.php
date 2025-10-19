@@ -46,11 +46,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is regular user - dengan pengecekan null
+     * Check if user is regular mahasiswa - dengan pengecekan null
      */
-    public function isUser()
+    public function isMahasiswa()
     {
-        return $this->role === 'user' || $this->role === null;
+        return $this->role === 'mahasiswa' || $this->role === null;
     }
 
     /**
@@ -58,6 +58,6 @@ class User extends Authenticatable
      */
     public function getRole()
     {
-        return $this->role ?? 'user';
+        return $this->role ?? 'mahasiswa';
     }
 }

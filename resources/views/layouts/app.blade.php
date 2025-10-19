@@ -21,10 +21,9 @@
         href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet" />
 
-    <!-- Icons. Uncomment required icon fonts -->
-    {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" /> --}}
-
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}"
@@ -33,14 +32,38 @@
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
 
-    <!-- Page CSS -->
+        .layout-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .layout-page {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+
+        .content-footer {
+            flex-shrink: 0;
+        }
+    </style>
 
     <!-- Helpers -->
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
 
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <!-- Config -->
     <script src="{{ asset('assets/js/config.js') }}"></script>
 </head>
 
@@ -49,55 +72,13 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
-
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="index.html" class="app-brand-link">
+                    <a href="{{ route('home.index') }}" class="app-brand-link">
                         <span class="app-brand-logo demo">
-                            <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <defs>
-                                    <path
-                                        d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z"
-                                        id="path-1"></path>
-                                    <path
-                                        d="M5.47320593,6.00457225 C4.05321814,8.216144 4.36334763,10.0722806 6.40359441,11.5729822 C8.61520715,12.571656 10.0999176,13.2171421 10.8577257,13.5094407 L15.5088241,14.433041 L18.6192054,7.984237 C15.5364148,3.11535317 13.9273018,0.573395879 13.7918663,0.358365126 C13.5790555,0.511491653 10.8061687,2.3935607 5.47320593,6.00457225 Z"
-                                        id="path-3"></path>
-                                    <path
-                                        d="M7.50063644,21.2294429 L12.3234468,23.3159332 C14.1688022,24.7579751 14.397098,26.4880487 13.008334,28.506154 C11.6195701,30.5242593 10.3099883,31.790241 9.07958868,32.3040991 C5.78142938,33.4346997 4.13234973,34 4.13234973,34 C4.13234973,34 2.75489982,33.0538207 2.37032616e-14,31.1614621 C-0.55822714,27.8186216 -0.55822714,26.0572515 -4.05231404e-15,25.8773518 C0.83734071,25.6075023 2.77988457,22.8248993 3.3049379,22.52991 C3.65497346,22.3332504 5.05353963,21.8997614 7.50063644,21.2294429 Z"
-                                        id="path-4"></path>
-                                    <path
-                                        d="M20.6,7.13333333 L25.6,13.8 C26.2627417,14.6836556 26.0836556,15.9372583 25.2,16.6 C24.8538077,16.8596443 24.4327404,17 24,17 L14,17 C12.8954305,17 12,16.1045695 12,15 C12,14.5672596 12.1403557,14.1461923 12.4,13.8 L17.4,7.13333333 C18.0627417,6.24967773 19.3163444,6.07059163 20.2,6.73333333 C20.3516113,6.84704183 20.4862915,6.981722 20.6,7.13333333 Z"
-                                        id="path-5"></path>
-                                </defs>
-                                <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
-                                        <g id="Icon" transform="translate(27.000000, 15.000000)">
-                                            <g id="Mask" transform="translate(0.000000, 8.000000)">
-                                                <mask id="mask-2" fill="white">
-                                                    <use xlink:href="#path-1"></use>
-                                                </mask>
-                                                <use fill="#696cff" xlink:href="#path-1"></use>
-                                                <g id="Path-3" mask="url(#mask-2)">
-                                                    <use fill="#696cff" xlink:href="#path-3"></use>
-                                                    <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-3"></use>
-                                                </g>
-                                                <g id="Path-4" mask="url(#mask-2)">
-                                                    <use fill="#696cff" xlink:href="#path-4"></use>
-                                                    <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-4"></use>
-                                                </g>
-                                            </g>
-                                            <g id="Triangle"
-                                                transform="translate(19.000000, 11.000000) rotate(-300.000000) translate(-19.000000, -11.000000) ">
-                                                <use fill="#696cff" xlink:href="#path-5"></use>
-                                                <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-5"></use>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </svg>
+                            <!-- Logo SVG -->
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2">SISTERPPG</span>
                     </a>
 
                     <a href="javascript:void(0);"
@@ -109,71 +90,39 @@
                 <div class="menu-inner-shadow"></div>
 
                 <ul class="menu-inner py-1">
-                    <!-- Dashboard -->
-                    <li class="menu-item">
-                        <a href="{{ route('home.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-house"></i>
-                            <div data-i18n="Home">Home</div>
-                        </a>
-                    </li>
+                    @inject('menuService', 'App\Services\MenuService')
+                    @php
+                        $currentRoute = request()->route()->getName();
+                        $menus = $menuService->getMenuForUser();
+                    @endphp
 
-                    <li class="menu-item">
-                        <a href="{{ route('datamhs.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-database"></i>
-                            <div data-i18n="Data Mahasiswa">Data Mahasiswa</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="{{ route('masterdata.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-server"></i>
-                            <div data-i18n="Data Master">Data Master</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="{{ route('ppl.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-file"></i>
-                            <div data-i18n="PPL">PPL</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="{{ route('matkur.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-file"></i>
-                            <div data-i18n="Matkul & Kurikulim">Matkul & Kurikulum</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="{{ route('laporan.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-file"></i>
-                            <div data-i18n="Laporan">Laporan</div>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a href="{{ route('setting.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons fa-solid fa-gears"></i>
-                            <div data-i18n="Analytics">Setting</div>
-                        </a>
-                    </li>
-
-                    <!-- Layouts -->
-                    {{-- <li class="menu-item active open">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layout"></i>
-                <div data-i18n="Layouts">Layouts</div>
-              </a>
-
-              <ul class="menu-sub">
-                <li class="menu-item active">
-                  <a href="layouts-without-menu.html" class="menu-link">
-                    <div data-i18n="Without menu">Without menu</div>
-                  </a>
-                </li>
-              </ul>
-            </li> --}}
+                    @foreach($menus as $menu)
+                        @if($menu->children->count() > 0)
+                            <li class="menu-item {{ $menuService->isMenuActive($menu, $currentRoute) ? 'active open' : '' }}">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons {{ $menu->icon }}"></i>
+                                    <div data-i18n="{{ $menu->name }}">{{ $menu->name }}</div>
+                                </a>
+                                <ul class="menu-sub">
+                                    @foreach($menu->children as $child)
+                                        <li class="menu-item {{ $menuService->isMenuActive($child, $currentRoute) ? 'active' : '' }}">
+                                            <a href="{{ $child->getMenuUrl() }}" class="menu-link">
+                                                <i class="menu-icon tf-icons {{ $child->icon }}"></i>
+                                                <div data-i18n="{{ $child->name }}">{{ $child->name }}</div>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </li>
+                        @else
+                            <li class="menu-item {{ $menuService->isMenuActive($menu, $currentRoute) ? 'active' : '' }}">
+                                <a href="{{ $menu->getMenuUrl() }}" class="menu-link">
+                                    <i class="menu-icon tf-icons {{ $menu->icon }}"></i>
+                                    <div data-i18n="{{ $menu->name }}">{{ $menu->name }}</div>
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
                 </ul>
             </aside>
             <!-- / Menu -->
@@ -181,7 +130,6 @@
             <!-- Layout container -->
             <div class="layout-page">
                 <!-- Navbar -->
-
                 <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                     id="layout-navbar">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
@@ -258,44 +206,31 @@
                         </ul>
                     </div>
                 </nav>
-
                 <!-- / Navbar -->
 
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
-
-                    <div class="container-fluid flex-grow-1 container-p-y">
-                        <!-- Layout -->
-                        @yield('content')
-                        <!--/ Layout -->
+                    <div class="content-wrapper">
+                        <div class="container-fluid flex-grow-1 container-p-y">
+                            @yield('content')
+                        </div>
                     </div>
                     <!-- / Content -->
 
                     <!-- Footer -->
                     <footer class="content-footer footer bg-footer-theme">
-                        <div
-                            class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                        <div class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                             <div class="mb-2 mb-md-0">
-                                ©
-                                <script>
-                                    document.write(new Date().getFullYear());
-                                </script>
-                                , made with ❤️ by
-                                <a href="https://themeselection.com" target="_blank"
-                                    class="footer-link fw-bolder">ThemeSelection</a>
+                                © <script>document.write(new Date().getFullYear());</script>,
+                                made with ❤️ by
+                                <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
                             </div>
                             <div>
-                                <a href="https://themeselection.com/license/" class="footer-link me-4"
-                                    target="_blank">License</a>
-                                <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More
-                                    Themes</a>
-
-                                <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                                    target="_blank" class="footer-link me-4">Documentation</a>
-
-                                <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                                    target="_blank" class="footer-link me-4">Support</a>
+                                <a href="#" class="footer-link me-4">License</a>
+                                <a href="#" class="footer-link me-4">Themes</a>
+                                <a href="#" class="footer-link me-4">Docs</a>
+                                <a href="#" class="footer-link me-4">Support</a>
                             </div>
                         </div>
                     </footer>
@@ -313,34 +248,138 @@
     </div>
     <!-- / Layout wrapper -->
 
-    {{-- <div class="buy-now">
-      <a
-        href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-        target="_blank"
-        class="btn btn-danger btn-buy-now"
-        >Upgrade to Pro</a
-      >
-    </div> --}}
+    <!-- Bootstrap Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999">
+        <!-- Success Toast -->
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="successMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Error Toast -->
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span id="errorMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Warning Toast -->
+        <div id="warningToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span id="warningMessage"></span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Info Toast -->
+        <div id="infoToast" class="toast align-items-center text-bg-info border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <span id="infoMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
     <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-
     <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
-    <!-- endbuild -->
-
-    <!-- Vendors JS -->
 
     <!-- Main JS -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
-    <!-- Page JS -->
+    <!-- Toast Notification Script -->
+    <script>
+        // Initialize Bootstrap Toasts
+        let successToast, errorToast, warningToast, infoToast;
 
-    <!-- Place this tag in your head or just before your close body tag. -->
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize toast instances
+            successToast = new bootstrap.Toast(document.getElementById('successToast'));
+            errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+            warningToast = new bootstrap.Toast(document.getElementById('warningToast'));
+            infoToast = new bootstrap.Toast(document.getElementById('infoToast'));
+
+            // Show toast from session flash messages
+            @if(session('success'))
+                showToast('success', '{{ session('success') }}');
+            @endif
+
+            @if(session('error'))
+                showToast('error', '{{ session('error') }}');
+            @endif
+
+            @if(session('warning'))
+                showToast('warning', '{{ session('warning') }}');
+            @endif
+
+            @if(session('info'))
+                showToast('info', '{{ session('info') }}');
+            @endif
+
+            @if($errors->any())
+                showToast('error', '{{ $errors->first() }}');
+            @endif
+        });
+
+        // Toast function
+        function showToast(type, message) {
+            if (typeof successToast === 'undefined') {
+                console.warn('Toast not initialized yet');
+                return;
+            }
+
+            let toastElement;
+            let messageElement;
+
+            switch (type) {
+                case 'success':
+                    toastElement = successToast;
+                    messageElement = document.getElementById('successMessage');
+                    break;
+                case 'error':
+                    toastElement = errorToast;
+                    messageElement = document.getElementById('errorMessage');
+                    break;
+                case 'warning':
+                    toastElement = warningToast;
+                    messageElement = document.getElementById('warningMessage');
+                    break;
+                case 'info':
+                    toastElement = infoToast;
+                    messageElement = document.getElementById('infoMessage');
+                    break;
+                default:
+                    return;
+            }
+
+            if (messageElement) {
+                messageElement.textContent = message;
+                toastElement.show();
+            }
+        }
+
+        // Global function to show toast from anywhere
+        window.showToast = showToast;
+    </script>
+
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
-
 </html>

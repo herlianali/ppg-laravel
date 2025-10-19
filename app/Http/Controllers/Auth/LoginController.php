@@ -30,8 +30,8 @@ class LoginController extends Controller
             // Redirect berdasarkan role
             $user = Auth::user();
             if ($user->isAdmin() || $user->isVerifikator()) {
-                return redirect()->route('lapor.index');
-            } elseif ($user->isUser()) {
+                return redirect()->route('home.index');
+            } elseif ($user->isMahasiswa()) {
                 return redirect()->route('lapor.create');
             }
 

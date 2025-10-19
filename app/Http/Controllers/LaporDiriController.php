@@ -13,22 +13,26 @@ use Illuminate\Support\Facades\Validator;
 
 class LaporDiriController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Tampilkan semua data (Read)
      */
     public function index()
     {
-        $lapor = LaporDiri::latest()->paginate(10);
+        if (!Auth::user()->isMahasiswa()) {
+            abort(403, 'Hanya User Biasa yang dapat mengakses halaman ini.');
+        }
+        
+        // Hanya tampilkan data milik user yang login
+        $lapor = LaporDiri::where('user_id', Auth::id())->latest()->paginate(10);
         return view('formPPGMhs.index', compact('lapor'));
     }
 
     public function list()
     {
-        $lapor = LaporDiri::latest()->paginate(10);
+        if (!Auth::user()->isAdmin() && !Auth::user()->isVerifikator()) {
+            abort(403, 'Hanya Admin dan Verifikator yang dapat mengakses halaman ini.');
+        }
+        $lapor = LaporDiri::with('user')->latest()->paginate(10);
         return view('formPPGMhs.list', compact('lapor'));
     }
     /**
@@ -36,10 +40,10 @@ class LaporDiriController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isUser()) {
+        if (!Auth::user()->isMahasiswa()) {
             abort(403, 'Hanya user biasa yang dapat mengisi form lapor diri.');
         }
-        return view('formPPGMhs.create');
+        return view('formPPGMhs.index');
     }
 
     /**
@@ -51,9 +55,11 @@ class LaporDiriController extends Controller
         Log::info('IP Address: ' . $request->ip());
         Log::info('User Agent: ' . $request->userAgent());
 
-        if (!Auth::user()->isUser()) {
-            abort(403, 'Hanya user biasa yang dapat mengisi form lapor diri.');
+        if (!Auth::user()->isMahasiswa()) {
+            return redirect()->back()
+                ->with('error', 'Hanya user biasa yang dapat mengisi form lapor diri.');
         }
+
         // Log semua input data (kecuali file)
         $inputData = $request->except([
             'file_pakta_integritas',
@@ -150,18 +156,18 @@ class LaporDiriController extends Controller
 
         Log::info('Memulai validasi...');
 
-        try {
+         try {
             $validator = Validator::make($request->all(), $validationRules);
 
             if ($validator->fails()) {
                 $errors = $validator->errors()->all();
                 Log::error('VALIDATION FAILED:', $errors);
-                Log::error('Validation Errors Detail:', $validator->errors()->toArray());
-
+                
                 return redirect()->back()
                     ->withErrors($validator)
                     ->withInput()
-                    ->with('error', 'Terjadi kesalahan validasi. Silakan periksa kembali data Anda.');
+                    ->with('error', 'Terjadi kesalahan validasi. Silakan periksa kembali data Anda.')
+                    ->with('current_step', $request->input('current_step', 1));
             }
 
             Log::info('Validasi berhasil!');
@@ -171,7 +177,11 @@ class LaporDiriController extends Controller
             Log::info('Memulai database transaction...');
 
             $data = $request->except($fileFields);
-            Log::info('Data setelah exclude file:', $data);
+            
+            // TAMBAHKAN USER_ID DARI AUTH USER
+            $data['user_id'] = Auth::id();
+            
+            Log::info('Data setelah exclude file dan tambah user_id:', $data);
 
             // Upload semua file
             $uploadedFiles = [];
@@ -205,12 +215,12 @@ class LaporDiriController extends Controller
                 DB::commit();
                 Log::info('Database transaction committed!');
 
-                return redirect()->route('lapor.index')
-                    ->with('success', 'Data berhasil disimpan!');
+                return redirect()->route('home.index')
+                    ->with('success', 'Data lapor diri berhasil disimpan!');
+
             } catch (\Exception $createError) {
                 Log::error('Error saat create data: ' . $createError->getMessage());
-                Log::error('Error trace: ' . $createError->getTraceAsString());
-
+                
                 // Rollback transaction
                 DB::rollBack();
                 Log::error('Database transaction rolled back!');
@@ -223,21 +233,20 @@ class LaporDiriController extends Controller
                     }
                 }
 
-                throw $createError;
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $createError->getMessage())
+                    ->with('current_step', $request->input('current_step', 1));
             }
+
         } catch (\Exception $e) {
             Log::error('=== ERROR STORE DATA ===');
             Log::error('Error Message: ' . $e->getMessage());
-            Log::error('Error File: ' . $e->getFile());
-            Log::error('Error Line: ' . $e->getLine());
-            Log::error('Error Trace: ' . $e->getTraceAsString());
-            Log::error('=== AKHIR ERROR STORE DATA ===');
-
-            $errorMessage = 'Terjadi kesalahan: ' . $e->getMessage();
 
             return redirect()->back()
-                ->with('error', $errorMessage)
-                ->withInput();
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->with('current_step', $request->input('current_step', 1));
         } finally {
             Log::info('=== SELESAI PROSES STORE DATA ===');
         }
@@ -249,6 +258,12 @@ class LaporDiriController extends Controller
     public function show($id)
     {
         $lapor = LaporDiri::findOrFail($id);
+        
+        // Cek apakah user boleh melihat data ini
+        if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
+            abort(403, 'Anda hanya dapat melihat data sendiri.');
+        }
+        
         return view('formPPGMhs.show', compact('lapor'));
     }
 
@@ -258,6 +273,12 @@ class LaporDiriController extends Controller
     public function edit($id)
     {
         $lapor = LaporDiri::findOrFail($id);
+        
+        // Cek apakah user boleh mengedit data ini
+        if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
+            abort(403, 'Anda hanya dapat mengedit data sendiri.');
+        }
+        
         return view('formPPGMhs.edit', compact('lapor'));
     }
 
@@ -268,6 +289,9 @@ class LaporDiriController extends Controller
     {
         $lapor = LaporDiri::findOrFail($id);
 
+        if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
+            abort(403, 'Anda hanya dapat mengupdate data sendiri.');
+        }
         $request->validate([
             // Validasi sama seperti store, tapi file tidak required
             'nama_lengkap' => 'required|string|max:255',
@@ -359,10 +383,11 @@ class LaporDiriController extends Controller
 
             return redirect()->route('lapor.index')
                 ->with('success', 'Data berhasil diperbarui!');
+
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->withInput();
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
@@ -374,6 +399,9 @@ class LaporDiriController extends Controller
         try {
             $lapor = LaporDiri::findOrFail($id);
 
+            if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
+                abort(403, 'Anda hanya dapat menghapus data sendiri.');
+            }
             // Hapus file-file yang terkait
             $fileFields = [
                 'file_pakta_integritas',
@@ -400,11 +428,13 @@ class LaporDiriController extends Controller
 
             return redirect()->route('lapor.index')
                 ->with('success', 'Data berhasil dihapus!');
+
         } catch (\Exception $e) {
             return redirect()->route('lapor.index')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
 
     /**
      * View file di browser (Preview)

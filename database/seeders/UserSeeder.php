@@ -28,10 +28,10 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'User Biasa',
-                'email' => 'user@ppg.app',
+                'name' => 'Mahasiswa',
+                'email' => 'mahasiswa@ppg.app',
                 'password' => Hash::make('password123'),
-                'role' => 'user',
+                'role' => 'mahasiswa',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
