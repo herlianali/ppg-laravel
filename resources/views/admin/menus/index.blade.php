@@ -100,7 +100,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group">
+                                                <div class="action-buttons">
                                                     <!-- Tombol Toggle Status -->
                                                     <form action="{{ route('admin.menus.toggle-status', $menu->id) }}" method="POST" class="d-inline">
                                                         @csrf
@@ -177,7 +177,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group" role="group">
+                                                    <div class="action-buttons">
                                                         <!-- Tombol Toggle Status untuk Child -->
                                                         <form action="{{ route('admin.menus.toggle-status', $child->id) }}" method="POST" class="d-inline">
                                                             @csrf
@@ -262,8 +262,31 @@
 @endpush
 
 <style>
+    .action-buttons {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+    
+    .action-buttons form,
+    .action-buttons a,
+    .action-buttons button {
+        margin: 0 !important;
+        flex-shrink: 0;
+    }
+    
+    .action-buttons .btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+    
+    /* Untuk tombol batch operations di header */
     .btn-group .btn {
-        margin-right: 2px;
+        margin-right: 8px;
     }
     .btn-group .btn:last-child {
         margin-right: 0;
