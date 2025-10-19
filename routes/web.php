@@ -17,13 +17,13 @@ Route::get('/', function () {
 });
 
 // Protected Routes dengan Middleware Auth
-Route::middleware(['auth'])->group(function () {
+// Route::middleware(['auth'])->group(function () {
     
     // Dashboard - bisa diakses semua role yang login
     Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 
     // ========== ROUTES UNTUK ADMIN ==========
-    Route::middleware(['administrator'])->group(function () {
+    // Route::middleware(['administrator'])->group(function () {
         Route::get('/masterdata', function () {
             return view('masterdata.index');
         })->name('masterdata.index');
@@ -45,10 +45,10 @@ Route::middleware(['auth'])->group(function () {
             Route::post('menus/deactivate-all', [\App\Http\Controllers\Admin\MenuController::class, 'deactivateAll'])
                 ->name('menus.deactivate-all');
         });
-    });
+    // });
 
     // ========== ROUTES UNTUK VERIFIKATOR ==========
-    Route::middleware(['verifikator'])->group(function () {
+    // Route::middleware(['verifikator'])->group(function () {
         Route::get('/verifikasi', [VerifikasiController::class, 'listVerifikasi'])->name('verifikasi.index');
         Route::post('/lapor/{id}/verifikasi', [VerifikasiController::class, 'verifikasi'])->name('lapor.verifikasi');
         
@@ -58,10 +58,10 @@ Route::middleware(['auth'])->group(function () {
 
         // Verifikator bisa lihat semua data lapor diri
         Route::get('/lapor/verifikator', [LaporDiriController::class, 'list'])->name('lapor.verifikator.index');
-    });
+    // });
 
     // ========== ROUTES UNTUK USER BIASA (MAHASISWA) ==========
-    Route::middleware(['mahasiswa_or_verifikator'])->group(function () {
+    // Route::middleware(['mahasiswa_or_verifikator'])->group(function () {
         // Route CREATE harus didefinisikan sebelum route dengan parameter {id}
         Route::get('/lapor/create', [LaporDiriController::class, 'create'])->name('lapor.create');
         Route::post('/lapor', [LaporDiriController::class, 'store'])->name('lapor.store');
@@ -75,7 +75,7 @@ Route::middleware(['auth'])->group(function () {
         // Data pribadi
         Route::get('/lapor/my', [LaporDiriController::class, 'myData'])->name('lapor.my.index');
         Route::get('/lapor/my/{id}', [LaporDiriController::class, 'showMyData'])->name('lapor.my.show');
-    });
+    // });
 
     // ========== ROUTES YANG BISA DIAKSES MULTI ROLE ==========
     
@@ -95,4 +95,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporan', function () {
         return view('laporan.index');
     })->name('laporan.index');
-});
+// });
