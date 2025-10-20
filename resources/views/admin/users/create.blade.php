@@ -31,7 +31,7 @@
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">Alamat Email</label>
-                                <input type="email" name="email" id="email"
+                                <input type="text" name="email" id="email"
                                     class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
                                     required>
                                 @error('email')
