@@ -23,7 +23,7 @@
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
-    
+
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}"
@@ -32,9 +32,10 @@
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    
+
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
         }
@@ -96,16 +97,18 @@
                         $menus = $menuService->getMenuForUser();
                     @endphp
 
-                    @foreach($menus as $menu)
-                        @if($menu->children->count() > 0)
-                            <li class="menu-item {{ $menuService->isMenuActive($menu, $currentRoute) ? 'active open' : '' }}">
+                    @foreach ($menus as $menu)
+                        @if ($menu->children->count() > 0)
+                            <li
+                                class="menu-item {{ $menuService->isMenuActive($menu, $currentRoute) ? 'active open' : '' }}">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons {{ $menu->icon }}"></i>
                                     <div data-i18n="{{ $menu->name }}">{{ $menu->name }}</div>
                                 </a>
                                 <ul class="menu-sub">
-                                    @foreach($menu->children as $child)
-                                        <li class="menu-item {{ $menuService->isMenuActive($child, $currentRoute) ? 'active' : '' }}">
+                                    @foreach ($menu->children as $child)
+                                        <li
+                                            class="menu-item {{ $menuService->isMenuActive($child, $currentRoute) ? 'active' : '' }}">
                                             <a href="{{ $child->getMenuUrl() }}" class="menu-link">
                                                 <i class="menu-icon tf-icons {{ $child->icon }}"></i>
                                                 <div data-i18n="{{ $child->name }}">{{ $child->name }}</div>
@@ -115,7 +118,8 @@
                                 </ul>
                             </li>
                         @else
-                            <li class="menu-item {{ $menuService->isMenuActive($menu, $currentRoute) ? 'active' : '' }}">
+                            <li
+                                class="menu-item {{ $menuService->isMenuActive($menu, $currentRoute) ? 'active' : '' }}">
                                 <a href="{{ $menu->getMenuUrl() }}" class="menu-link">
                                     <i class="menu-icon tf-icons {{ $menu->icon }}"></i>
                                     <div data-i18n="{{ $menu->name }}">{{ $menu->name }}</div>
@@ -160,8 +164,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">John Doe</span>
-                                                    <small class="text-muted">Admin</small>
+                                                    <span class="fw-semibold d-block">{{ Auth::user()->name }}</span>
+                                                    <small class="text-muted">{{ Auth::user()->role }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -175,13 +179,13 @@
                                             <span class="align-middle">My Profile</span>
                                         </a>
                                     </li>
-                                    <li>
+                                    {{-- <li>
                                         <a class="dropdown-item" href="#">
                                             <i class="bx bx-cog me-2"></i>
                                             <span class="align-middle">Settings</span>
                                         </a>
-                                    </li>
-                                    <li>
+                                    </li> --}}
+                                    {{-- <li>
                                         <a class="dropdown-item" href="#">
                                             <span class="d-flex align-items-center align-middle">
                                                 <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
@@ -190,7 +194,7 @@
                                                     class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
                                             </span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
@@ -219,7 +223,7 @@
                     <!-- / Content -->
 
                     <!-- Footer -->
-                    <footer class="content-footer footer bg-footer-theme">
+                    {{-- <footer class="content-footer footer bg-footer-theme">
                         <div class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                             <div class="mb-2 mb-md-0">
                                 © <script>document.write(new Date().getFullYear());</script>,
@@ -233,7 +237,7 @@
                                 <a href="#" class="footer-link me-4">Support</a>
                             </div>
                         </div>
-                    </footer>
+                    </footer> --}}
                     <!-- / Footer -->
 
                     <div class="content-backdrop fade"></div>
@@ -251,46 +255,54 @@
     <!-- Bootstrap Toast Container -->
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999">
         <!-- Success Toast -->
-        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                     <i class="fas fa-check-circle me-2"></i>
                     <span id="successMessage"></span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
         </div>
 
         <!-- Error Toast -->
-        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     <span id="errorMessage"></span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
         </div>
 
         <!-- Warning Toast -->
-        <div id="warningToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="warningToast" class="toast align-items-center text-bg-warning border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     <span id="warningMessage"></span>
                 </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
         </div>
 
         <!-- Info Toast -->
-        <div id="infoToast" class="toast align-items-center text-bg-info border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="infoToast" class="toast align-items-center text-bg-info border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                     <i class="fas fa-info-circle me-2"></i>
                     <span id="infoMessage"></span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -318,23 +330,23 @@
             infoToast = new bootstrap.Toast(document.getElementById('infoToast'));
 
             // Show toast from session flash messages
-            @if(session('success'))
+            @if (session('success'))
                 showToast('success', '{{ session('success') }}');
             @endif
 
-            @if(session('error'))
+            @if (session('error'))
                 showToast('error', '{{ session('error') }}');
             @endif
 
-            @if(session('warning'))
+            @if (session('warning'))
                 showToast('warning', '{{ session('warning') }}');
             @endif
 
-            @if(session('info'))
+            @if (session('info'))
                 showToast('info', '{{ session('info') }}');
             @endif
 
-            @if($errors->any())
+            @if ($errors->any())
                 showToast('error', '{{ $errors->first() }}');
             @endif
         });
@@ -381,5 +393,7 @@
     </script>
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    @stack('scripts')
 </body>
+
 </html>

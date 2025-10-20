@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('no_kk', 16)->nullable();
             $table->string('nuptk')->nullable();
             $table->string('asal_pt')->nullable();
+            $table->string('bidang_studi')->nullable();
             $table->decimal('ipk', 3, 2)->nullable();
             $table->string('no_hp')->nullable();
             $table->string('email')->nullable();

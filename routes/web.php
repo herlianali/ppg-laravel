@@ -5,94 +5,84 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LaporDiriController;
 use App\Http\Controllers\VerifikasiController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\BidangStudiController;
+use App\Http\Controllers\MahasiswaController;
 
-// Authentication Routes
+// =======================
+// AUTHENTICATION
+// =======================
+Route::get('/', fn() => redirect('/login'));
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Public Routes
-Route::get('/', function () {
-    return redirect('/login');
-});
-
-// Protected Routes dengan Middleware Auth
-// Route::middleware(['auth'])->group(function () {
-    
-    // Dashboard - bisa diakses semua role yang login
+// =======================
+// ROUTE UTAMA (SEMUA ROLE)
+// =======================
+Route::middleware(['auth', 'check.menu'])->group(function () {
+    // Dashboard
     Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 
-    // ========== ROUTES UNTUK ADMIN ==========
-    // Route::middleware(['administrator'])->group(function () {
-        Route::get('/masterdata', function () {
-            return view('masterdata.index');
-        })->name('masterdata.index');
+    // =======================
+    // DATA MASTER (Admin)
+    // =======================
+    Route::get('/masterdata', fn() => view('masterdata.index'))->name('masterdata.index');
 
-        Route::get('/setting', function () {
-            return redirect()->route('admin.menus.index');
-        })->name('setting.index');
+    // =======================
+    // VERIFIKASI (Admin & Verifikator)
+    // =======================
+    Route::get('/verifikasi', [VerifikasiController::class, 'listVerifikasi'])->name('verifikasi.index');
+    Route::post('/lapor/{id}/verifikasi', [VerifikasiController::class, 'verifikasi'])->name('lapor.verifikasi');
 
-        // Admin bisa lihat semua data lapor diri
-        Route::get('/lapor/admin', [LaporDiriController::class, 'index'])->name('lapor.admin.index');
-        
-        Route::prefix('admin')->name('admin.')->group(function () {
-            Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class);
-            // Routes untuk status menu
-            Route::post('menus/{menu}/toggle-status', [\App\Http\Controllers\Admin\MenuController::class, 'toggleStatus'])
-                ->name('menus.toggle-status');
-            Route::post('menus/activate-all', [\App\Http\Controllers\Admin\MenuController::class, 'activateAll'])
-                ->name('menus.activate-all');
-            Route::post('menus/deactivate-all', [\App\Http\Controllers\Admin\MenuController::class, 'deactivateAll'])
-                ->name('menus.deactivate-all');
-        });
-    // });
+    // Data Saya
+    Route::get('/lapor/my', [LaporDiriController::class, 'myData'])->name('lapor.my.index');
+    Route::get('/lapor/my/{id}', [LaporDiriController::class, 'showMyData'])->name('lapor.my.show');
 
-    // ========== ROUTES UNTUK VERIFIKATOR ==========
-    // Route::middleware(['verifikator'])->group(function () {
-        Route::get('/verifikasi', [VerifikasiController::class, 'listVerifikasi'])->name('verifikasi.index');
-        Route::post('/lapor/{id}/verifikasi', [VerifikasiController::class, 'verifikasi'])->name('lapor.verifikasi');
-        
-        Route::get('/datamhs', function () {
-            return view('datamhs.index');
-        })->name('datamhs.index');
+    // =======================
+    // LAPOR DIRI (Mahasiswa)
+    // =======================
+    Route::get('/lapor/create', [LaporDiriController::class, 'create'])->name('lapor.create');
+    Route::post('/lapor', [LaporDiriController::class, 'store'])->name('lapor.store');
+    Route::get('/lapor/{id}', [LaporDiriController::class, 'show'])->name('lapor.show');
+    Route::get('/lapor/{id}/edit', [LaporDiriController::class, 'edit'])->name('lapor.edit');
+    Route::put('/lapor/{id}', [LaporDiriController::class, 'update'])->name('lapor.update');
+    Route::delete('/lapor/{id}', [LaporDiriController::class, 'destroy'])->name('lapor.destroy');
 
-        // Verifikator bisa lihat semua data lapor diri
-        Route::get('/lapor/verifikator', [LaporDiriController::class, 'list'])->name('lapor.verifikator.index');
-    // });
+    // =======================
+    // LAPOR DIRI VERVAL ID (Admin)
+    // =======================
+    Route::get('/lapor/admin', [LaporDiriController::class, 'index'])->name('lapor.admin.index');
 
-    // ========== ROUTES UNTUK USER BIASA (MAHASISWA) ==========
-    // Route::middleware(['mahasiswa_or_verifikator'])->group(function () {
-        // Route CREATE harus didefinisikan sebelum route dengan parameter {id}
-        Route::get('/lapor/create', [LaporDiriController::class, 'create'])->name('lapor.create');
-        Route::post('/lapor', [LaporDiriController::class, 'store'])->name('lapor.store');
-        
-        // Route dengan parameter {id}
-        Route::get('/lapor/{id}', [LaporDiriController::class, 'show'])->name('lapor.show');
-        Route::get('/lapor/{id}/edit', [LaporDiriController::class, 'edit'])->name('lapor.edit');
-        Route::put('/lapor/{id}', [LaporDiriController::class, 'update'])->name('lapor.update');
-        Route::delete('/lapor/{id}', [LaporDiriController::class, 'destroy'])->name('lapor.destroy');
+    // =======================
+    // MENU MANAGEMENT (Admin)
+    // =======================
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('menus', MenuController::class);
+        Route::post('menus/{menu}/toggle-status', [MenuController::class, 'toggleStatus'])->name('menus.toggle-status');
+        Route::post('menus/activate-all', [MenuController::class, 'activateAll'])->name('menus.activate-all');
+        Route::post('menus/deactivate-all', [MenuController::class, 'deactivateAll'])->name('menus.deactivate-all');
 
-        // Data pribadi
-        Route::get('/lapor/my', [LaporDiriController::class, 'myData'])->name('lapor.my.index');
-        Route::get('/lapor/my/{id}', [LaporDiriController::class, 'showMyData'])->name('lapor.my.show');
-    // });
+        Route::resource('users', UserController::class);
+        Route::post('users/import', [UserController::class, 'import'])->name('users.import');
+        Route::get('users/download-template', [UserController::class, 'downloadTemplate'])->name('users.download-template');
 
-    // ========== ROUTES YANG BISA DIAKSES MULTI ROLE ==========
-    
-    // View file dan download - bisa diakses semua role yang memiliki akses ke data
+        Route::resource('bidang-studi', BidangStudiController::class);
+        Route::get('mahasiswa', [UserController::class, 'mahasiswa'])->name('mahasiswa.index');
+    });
+
+    // =======================
+    // LAPORAN (Admin)
+    // =======================
+    Route::get('/laporan', fn() => view('laporan.index'))->name('laporan.index');
+});
+
+// =======================
+// COMMON (SEMUA ROLE LOGIN)
+// =======================
+Route::middleware(['auth'])->group(function () {
+    // File View & Download
     Route::get('/lapor/{id}/view/{field}', [LaporDiriController::class, 'viewFile'])->name('lapor.view');
     Route::get('/lapor/{id}/download/{field}', [LaporDiriController::class, 'downloadFile'])->name('lapor.download');
-
-    // Menu lainnya yang bisa diakses semua role
-    Route::get('/ppl', function () {
-        return view('ppl.index');
-    })->name('ppl.index');
-
-    Route::get('/matkur', function () {
-        return view('matkur.index');
-    })->name('matkur.index');
-
-    Route::get('/laporan', function () {
-        return view('laporan.index');
-    })->name('laporan.index');
-// });
+});

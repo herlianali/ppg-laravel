@@ -16,9 +16,9 @@ class VerifikasiController extends Controller
     public function verifikasi(Request $request, $id)
     {
         // Cek authorization
-        if (!Auth::user()->isAdmin() && !Auth::user()->isVerifikator()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (!Auth::user()->isAdmin() && !Auth::user()->isVerifikator()) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $request->validate([
             'status' => 'required|in:diproses,diterima,ditolak,revisi',
@@ -33,7 +33,7 @@ class VerifikasiController extends Controller
 
             // Cari atau buat data verifikasi
             $verifikasi = Verifikasi::firstOrNew(['lapor_diri_id' => $id]);
-            
+
             $verifikasi->status = $request->status;
             $verifikasi->komentar = $request->komentar;
             $verifikasi->verifikator = Auth::user()->name;
@@ -49,7 +49,6 @@ class VerifikasiController extends Controller
 
             return redirect()->route('verifikasi.index')
                 ->with('success', 'Data berhasil diverifikasi!');
-                
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -63,17 +62,17 @@ class VerifikasiController extends Controller
      */
     public function listVerifikasi()
     {
-        if (!Auth::user()->isAdmin() && !Auth::user()->isVerifikator()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (!Auth::user()->isAdmin() && !Auth::user()->isVerifikator()) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         // Query yang benar untuk mengambil data
-        $lapor = Verifikasi::with(['laporDiri' => function($query) {
-                $query->select('id', 'nama_lengkap', 'email', 'no_hp', 'asal_pt', 'nuptk', 'created_at');
-            }])
+        $lapor = Verifikasi::with(['laporDiri' => function ($query) {
+            $query->select('id', 'nama_lengkap', 'email', 'no_hp', 'asal_pt', 'bidang_studi', 'nuptk', 'created_at');
+        }])
             ->latest()
             ->paginate(10);
-            
+
         return view('formPPGMhs.list', compact('lapor'));
     }
 }

@@ -6,8 +6,8 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -30,12 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
             'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-            
+
             // Middleware custom untuk role
-            'administrator' => \App\Http\Middleware\CheckAdministrator::class,
-            'verifikator' => \App\Http\Middleware\CheckVerifikator::class,
-            'mahasiswa' => \App\Http\Middleware\CheckMahasiswa::class,
-            'mahasiswa_or_verifikator' => \App\Http\Middleware\MahasiswaOrVerifikator::class,
+            'check.menu' => \App\Http\Middleware\CheckMenuPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -13,45 +13,68 @@
                             {{ $lapor->nama_lengkap }}
                         </h5>
                         <div>
-                            <!-- Tombol Verifikasi -->
-                            <button type="button" class="btn btn-warning btn-sm btn-verifikasi" data-id="{{ $lapor->id }}"
-                                data-nama="{{ $lapor->nama_lengkap }}"
-                                data-status="{{ $lapor->verifikasi->status ?? 'diproses' }}"
-                                data-komentar="{{ $lapor->verifikasi->komentar ?? '' }}" title="Verifikasi Data">
-                                <i class="fas fa-clipboard-check me-1"></i> Verifikasi
-                            </button>
+                            <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
                         </div>
                     </div>
 
                     <div class="card-body mt-4">
+
                         <!-- Progress Status -->
                         <div class="alert alert-info">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-info-circle fa-2x me-3"></i>
                                 <div>
-                                    @php
-                                        $statusConfig = [
-                                            'diproses' => ['bg-secondary', 'fas fa-clock', 'Diproses'],
-                                            'diterima' => ['bg-success', 'fas fa-check', 'Diterima'],
-                                            'ditolak' => ['bg-danger', 'fas fa-times', 'Ditolak'],
-                                            'revisi' => ['bg-warning', 'fas fa-exclamation-triangle', 'Perlu Revisi'],
-                                        ];
-                                        $status = $lapor->verifikasi->status ?? 'diproses';
-                                        $config = $statusConfig[$status] ?? $statusConfig['diproses'];
-                                    @endphp
                                     <strong>Status Data:</strong>
-                                    <span class="badge {{ $config[0] }}">
-                                        <i class="{{ $config[1] }} me-1"></i>{{ $config[2] }}
-                                    </span>
-                                    @if ($lapor->verifikasi && $lapor->verifikasi->tanggal_verifikasi)
-                                        <small class="text-muted d-block">
-                                            Tanggal Verifikasi:
-                                            {{ \Carbon\Carbon::parse($lapor->verifikasi->tanggal_verifikasi)->format('d F Y H:i') }}
-                                        </small>
-                                    @endif
+                                    <span class="badge bg-success">Terkirim</span>
                                     <small class="text-muted d-block">Data dikirim pada:
                                         {{ $lapor->created_at->format('d F Y H:i') }}</small>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="section-card mb-4">
+                            <div class="section-header bg-light-warning d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-user-check me-2"></i>Verifikasi Data oleh Verifikator
+                                </h6>
+                                @if ($lapor->status_verifikasi === 'disetujui')
+                                    <span class="badge bg-success">Disetujui</span>
+                                @elseif ($lapor->status_verifikasi === 'ditolak')
+                                    <span class="badge bg-danger">Ditolak</span>
+                                @else
+                                    <span class="badge bg-secondary">Belum Diverifikasi</span>
+                                @endif
+                            </div>
+                            <div class="section-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold text-muted">Catatan Verifikator</label>
+                                    <p class="form-control-static">
+                                        {{ $lapor->catatan_verifikator ?? '-' }}
+                                    </p>
+                                </div>
+
+                                @if (auth()->user()->role === 'verifikator')
+                                    <form action="{{ route('lapor.verifikasi', $lapor->id) }}" method="POST"
+                                        class="mt-3">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="mb-3">
+                                            <label for="catatan" class="form-label fw-semibold">Tulis Catatan</label>
+                                            <textarea name="catatan_verifikator" id="catatan" rows="3" class="form-control"
+                                                placeholder="Catatan hasil verifikasi...">{{ $lapor->catatan_verifikator ?? '' }}</textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" name="status" value="disetujui" class="btn btn-success">
+                                                <i class="fas fa-check me-1"></i> Setujui
+                                            </button>
+                                            <button type="submit" name="status" value="ditolak" class="btn btn-danger">
+                                                <i class="fas fa-times me-1"></i> Tolak
+                                            </button>
+                                        </div>
+                                    </form>
+                                @endif
                             </div>
                         </div>
 
@@ -358,103 +381,22 @@
                                     Terakhir diupdate: {{ $lapor->updated_at->format('d F Y H:i') }}
                                 </small>
                             </div>
-                            @if (Auth::user()->role === 'admin')
-                                <div>
-                                    <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning">
-                                        <i class="fas fa-edit me-1"></i> Edit Data
-                                    </a>
-                                    <form action="{{ route('lapor.destroy', $lapor->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                            <i class="fas fa-trash me-1"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            @endif
+                            <div>
+                                <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning">
+                                    <i class="fas fa-edit me-1"></i> Edit Data
+                                </a>
+                                <form action="{{ route('lapor.destroy', $lapor->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                        <i class="fas fa-trash me-1"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Verifikasi -->
-    <div class="modal fade" id="verifikasiModal" tabindex="-1" aria-labelledby="verifikasiModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="verifikasiModalLabel">
-                        <i class="fas fa-clipboard-check me-2"></i>Verifikasi Data
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <form id="verifikasiForm" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="namaPendaftar" readonly>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Status Verifikasi <span
-                                            class="text-danger">*</span></label>
-                                    <select name="status" class="form-select" required id="statusVerifikasi">
-                                        <option value="diproses">Diproses</option>
-                                        <option value="diterima">Diterima</option>
-                                        <option value="ditolak">Ditolak</option>
-                                        <option value="revisi">Perlu Revisi</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Tanggal Verifikasi</label>
-                                    <input type="text" class="form-control" value="{{ now()->format('d F Y H:i') }}"
-                                        readonly>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Komentar / Catatan Verifikasi</label>
-                            <textarea name="komentar" class="form-control" rows="5"
-                                placeholder="Berikan komentar atau catatan verifikasi..." id="komentarVerifikasi"></textarea>
-                            <div class="form-text">
-                                <small>
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Komentar akan ditampilkan kepada pendaftar untuk informasi lebih lanjut
-                                </small>
-                            </div>
-                        </div>
-
-                        <!-- Preview komentar berdasarkan status -->
-                        <div id="komentarPreview" class="alert d-none">
-                            <div id="previewContent"></div>
-                        </div>
-
-                        <!-- Required fields untuk status tertentu -->
-                        <div id="requiredFields" class="alert alert-warning d-none">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span id="requiredMessage"></span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i> Batal
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-1"></i> Simpan Verifikasi
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -566,99 +508,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const verifikasiModal = new bootstrap.Modal(document.getElementById('verifikasiModal'));
-            const verifikasiForm = document.getElementById('verifikasiForm');
-            const statusVerifikasi = document.getElementById('statusVerifikasi');
-            const komentarVerifikasi = document.getElementById('komentarVerifikasi');
-            const komentarPreview = document.getElementById('komentarPreview');
-            const previewContent = document.getElementById('previewContent');
-            const requiredFields = document.getElementById('requiredFields');
-            const requiredMessage = document.getElementById('requiredMessage');
-
-            // Template komentar berdasarkan status
-            const komentarTemplates = {
-                diproses: "Data sedang dalam proses verifikasi. Harap menunggu informasi lebih lanjut.",
-                diterima: "Selamat! Data Anda telah diverifikasi dan diterima. Silakan melanjutkan ke tahap berikutnya.",
-                ditolak: "Maaf, data Anda tidak dapat diterima karena tidak memenuhi persyaratan yang ditetapkan.",
-                revisi: "Data Anda memerlukan revisi. Silakan perbaiki data sesuai dengan ketentuan yang berlaku."
-            };
-
-            // Event listener untuk tombol verifikasi
-            document.querySelectorAll('.btn-verifikasi').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    const nama = this.getAttribute('data-nama');
-                    const status = this.getAttribute('data-status');
-                    const komentar = this.getAttribute('data-komentar');
-
-                    // Set form action - PERBAIKI ROUTE INI
-                    verifikasiForm.action = `/lapor/${id}/verifikasi`;
-
-                    // Set nilai form
-                    document.getElementById('namaPendaftar').value = nama;
-                    statusVerifikasi.value = status;
-                    komentarVerifikasi.value = komentar;
-
-                    // Update preview
-                    updatePreview(status);
-
-                    // Tampilkan modal
-                    verifikasiModal.show();
-                });
-            });
-
-            // Update preview ketika status berubah
-            statusVerifikasi.addEventListener('change', function() {
-                updatePreview(this.value);
-            });
-
-            function updatePreview(status) {
-                const template = komentarTemplates[status];
-
-                if (template && !komentarVerifikasi.value) {
-                    previewContent.innerHTML = `<strong>Preview Komentar:</strong><br>${template}`;
-                    komentarPreview.className = `alert alert-info`;
-                    komentarPreview.classList.remove('d-none');
-                } else {
-                    komentarPreview.classList.add('d-none');
-                }
-
-                // Tampilkan pesan required fields
-                if (status === 'ditolak' || status === 'revisi') {
-                    requiredMessage.textContent = status === 'ditolak' ?
-                        'Wajib memberikan alasan penolakan pada kolom komentar.' :
-                        'Wajib memberikan detail revisi yang diperlukan pada kolom komentar.';
-                    requiredFields.classList.remove('d-none');
-                } else {
-                    requiredFields.classList.add('d-none');
-                }
-            }
-
-            // Validasi form sebelum submit
-            verifikasiForm.addEventListener('submit', function(e) {
-                const status = statusVerifikasi.value;
-                const komentar = komentarVerifikasi.value.trim();
-
-                if ((status === 'ditolak' || status === 'revisi') && !komentar) {
-                    e.preventDefault();
-                    alert('Harap isi komentar verifikasi untuk status ' + status + '.');
-                    komentarVerifikasi.focus();
-                    return false;
-                }
-
-                // Tampilkan loading
-                const submitBtn = this.querySelector('button[type="submit"]');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Menyimpan...';
-                submitBtn.disabled = true;
-            });
-
-            // Preview File Modal
             const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
             const filePreview = document.getElementById('filePreview');
             const previewModalLabel = document.getElementById('previewModalLabel');
             const downloadLink = document.getElementById('downloadLink');
 
-            // Event listener untuk tombol preview file
+            // Event listener untuk tombol preview
             document.querySelectorAll('.preview-file').forEach(button => {
                 button.addEventListener('click', function() {
                     const fileUrl = this.getAttribute('data-file-url');

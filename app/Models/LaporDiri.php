@@ -27,6 +27,7 @@ class LaporDiri extends Model
         'ipk',
         'no_hp',
         'email',
+        'bidang_studi',
 
         // Step 2: Alamat
         'alamat',
@@ -146,7 +147,7 @@ class LaporDiri extends Model
     public function getStatusLabelAttribute()
     {
         $status = $this->status_verifikasi;
-        
+
         $labels = [
             'diproses' => ['label' => 'Diproses', 'class' => 'warning'],
             'diterima' => ['label' => 'Diterima', 'class' => 'success'],
@@ -170,7 +171,7 @@ class LaporDiri extends Model
      */
     public function scopeDiterima($query)
     {
-        return $query->whereHas('verifikasi', function($q) {
+        return $query->whereHas('verifikasi', function ($q) {
             $q->where('status', 'diterima');
         });
     }
@@ -180,7 +181,7 @@ class LaporDiri extends Model
      */
     public function scopeDitolak($query)
     {
-        return $query->whereHas('verifikasi', function($q) {
+        return $query->whereHas('verifikasi', function ($q) {
             $q->where('status', 'ditolak');
         });
     }
@@ -190,8 +191,8 @@ class LaporDiri extends Model
      */
     public function scopeMenungguVerifikasi($query)
     {
-        return $query->where(function($q) {
-            $q->whereHas('verifikasi', function($subQ) {
+        return $query->where(function ($q) {
+            $q->whereHas('verifikasi', function ($subQ) {
                 $subQ->where('status', 'diproses');
             })->orDoesntHave('verifikasi');
         });
@@ -202,7 +203,7 @@ class LaporDiri extends Model
      */
     public function scopePerluRevisi($query)
     {
-        return $query->whereHas('verifikasi', function($q) {
+        return $query->whereHas('verifikasi', function ($q) {
             $q->where('status', 'revisi');
         });
     }

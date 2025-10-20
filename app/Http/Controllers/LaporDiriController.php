@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangStudi;
 use App\Models\LaporDiri;
+use App\Models\Verifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -18,10 +20,7 @@ class LaporDiriController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->isMahasiswa()) {
-            abort(403, 'Hanya User Biasa yang dapat mengakses halaman ini.');
-        }
-        
+
         // Hanya tampilkan data milik user yang login
         $lapor = LaporDiri::where('user_id', Auth::id())->latest()->paginate(10);
         return view('formPPGMhs.index', compact('lapor'));
@@ -29,9 +28,6 @@ class LaporDiriController extends Controller
 
     public function list()
     {
-        if (!Auth::user()->isAdmin() && !Auth::user()->isVerifikator()) {
-            abort(403, 'Hanya Admin dan Verifikator yang dapat mengakses halaman ini.');
-        }
         $lapor = LaporDiri::with('user')->latest()->paginate(10);
         return view('formPPGMhs.list', compact('lapor'));
     }
@@ -40,10 +36,8 @@ class LaporDiriController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isMahasiswa()) {
-            abort(403, 'Hanya user biasa yang dapat mengisi form lapor diri.');
-        }
-        return view('formPPGMhs.index');
+        $bidangStudi = BidangStudi::all();
+        return view('formPPGMhs.create', compact('bidangStudi'));
     }
 
     /**
@@ -55,10 +49,10 @@ class LaporDiriController extends Controller
         Log::info('IP Address: ' . $request->ip());
         Log::info('User Agent: ' . $request->userAgent());
 
-        if (!Auth::user()->isMahasiswa()) {
-            return redirect()->back()
-                ->with('error', 'Hanya user biasa yang dapat mengisi form lapor diri.');
-        }
+        // if (!Auth::user()->isMahasiswa()) {
+        //     return redirect()->back()
+        //         ->with('error', 'Hanya user biasa yang dapat mengisi form lapor diri.');
+        // }
 
         // Log semua input data (kecuali file)
         $inputData = $request->except([
@@ -122,6 +116,7 @@ class LaporDiriController extends Controller
             'ipk' => 'nullable|numeric|min:0|max:4',
             'no_hp' => 'nullable|string|max:15',
             'email' => 'required|email|max:255',
+            'bidang_studi' => 'required|string',
 
             // Step 2: Alamat
             'alamat' => 'nullable|string|max:500',
@@ -162,7 +157,7 @@ class LaporDiriController extends Controller
             if ($validator->fails()) {
                 $errors = $validator->errors()->all();
                 Log::error('VALIDATION FAILED:', $errors);
-                
+
                 return redirect()->back()
                     ->withErrors($validator)
                     ->withInput()
@@ -177,10 +172,10 @@ class LaporDiriController extends Controller
             Log::info('Memulai database transaction...');
 
             $data = $request->except($fileFields);
-            
+
             // TAMBAHKAN USER_ID DARI AUTH USER
             $data['user_id'] = Auth::id();
-            
+
             Log::info('Data setelah exclude file dan tambah user_id:', $data);
 
             // Upload semua file
@@ -220,10 +215,9 @@ class LaporDiriController extends Controller
 
                 return redirect()->route('home.index')
                     ->with('success', 'Data lapor diri berhasil disimpan!');
-
             } catch (\Exception $createError) {
                 Log::error('Error saat create data: ' . $createError->getMessage());
-                
+
                 // Rollback transaction
                 DB::rollBack();
                 Log::error('Database transaction rolled back!');
@@ -241,7 +235,6 @@ class LaporDiriController extends Controller
                     ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $createError->getMessage())
                     ->with('current_step', $request->input('current_step', 1));
             }
-
         } catch (\Exception $e) {
             Log::error('=== ERROR STORE DATA ===');
             Log::error('Error Message: ' . $e->getMessage());
@@ -261,12 +254,12 @@ class LaporDiriController extends Controller
     public function show($id)
     {
         $lapor = LaporDiri::findOrFail($id);
-        
+
         // Cek apakah user boleh melihat data ini
         // if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
         //     abort(403, 'Anda hanya dapat melihat data sendiri.');
         // }
-        
+
         return view('formPPGMhs.show', compact('lapor'));
     }
 
@@ -276,12 +269,7 @@ class LaporDiriController extends Controller
     public function edit($id)
     {
         $lapor = LaporDiri::findOrFail($id);
-        
-        // Cek apakah user boleh mengedit data ini
-        if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
-            abort(403, 'Anda hanya dapat mengedit data sendiri.');
-        }
-        
+
         return view('formPPGMhs.edit', compact('lapor'));
     }
 
@@ -292,9 +280,6 @@ class LaporDiriController extends Controller
     {
         $lapor = LaporDiri::findOrFail($id);
 
-        if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
-            abort(403, 'Anda hanya dapat mengupdate data sendiri.');
-        }
         $request->validate([
             // Validasi sama seperti store, tapi file tidak required
             'nama_lengkap' => 'required|string|max:255',
@@ -308,6 +293,7 @@ class LaporDiriController extends Controller
             'ipk' => 'nullable|numeric|min:0|max:4',
             'no_hp' => 'nullable|string|max:15',
             'email' => 'required|email|max:255',
+            'bidang_studi' => 'required|string',
             'alamat' => 'nullable|string|max:500',
             'kelurahan' => 'nullable|string|max:100',
             'kecamatan' => 'nullable|string|max:100',
@@ -386,7 +372,6 @@ class LaporDiriController extends Controller
 
             return redirect()->route('lapor.index')
                 ->with('success', 'Data berhasil diperbarui!');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -402,9 +387,6 @@ class LaporDiriController extends Controller
         try {
             $lapor = LaporDiri::findOrFail($id);
 
-            if (Auth::user()->isMahasiswa() && $lapor->user_id !== Auth::id()) {
-                abort(403, 'Anda hanya dapat menghapus data sendiri.');
-            }
             // Hapus file-file yang terkait
             $fileFields = [
                 'file_pakta_integritas',
@@ -431,7 +413,6 @@ class LaporDiriController extends Controller
 
             return redirect()->route('lapor.index')
                 ->with('success', 'Data berhasil dihapus!');
-
         } catch (\Exception $e) {
             return redirect()->route('lapor.index')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -523,6 +504,39 @@ class LaporDiriController extends Controller
     }
 
     /**
+     * Menampilkan daftar laporan milik user yang login
+     */
+    public function myData()
+    {
+        $userId = Auth::user()->id;
+
+        // Ambil semua data LaporDiri milik user yang login
+        $laporans = LaporDiri::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('formPPGMhs.index', compact('laporans'));
+    }
+
+    /**
+     * Menampilkan detail laporan diri milik user yang login
+     */
+    public function showMyData($id)
+    {
+        $userId = Auth::user()->id;
+
+        // Ambil data LaporDiri berdasarkan ID dan pastikan milik user login
+        $lapor = LaporDiri::where('id', $id)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+
+        // Ambil data Verifikasi jika ada
+        $verifikasi = Verifikasi::where('lapor_diri_id', $id)->first();
+
+        return view('formPPGMhs.my', compact('lapor', 'verifikasi'));
+    }
+
+    /**
      * Debug method untuk melihat log
      */
     public function debugLog()
@@ -535,26 +549,4 @@ class LaporDiriController extends Controller
 
         return 'Log file tidak ditemukan';
     }
-
-    // /**
-    //  * Method untuk membuat record verifikasi otomatis
-    //  */
-    // private function createVerifikasiRecord($laporDiriId)
-    // {
-    //     try {
-    //         $verifikasi = new Verifikasi();
-    //         $verifikasi->lapor_diri_id = $laporDiriId;
-    //         $verifikasi->status = 'diproses';
-    //         $verifikasi->verifikator = null;
-    //         $verifikasi->komentar = null;
-    //         $verifikasi->tanggal_verifikasi = null;
-    //         $verifikasi->save();
-
-    //         Log::info('Record verifikasi berhasil dibuat: ' . $verifikasi->id);
-    //         return $verifikasi;
-    //     } catch (\Exception $e) {
-    //         Log::error('Gagal membuat record verifikasi: ' . $e->getMessage());
-    //         throw $e;
-    //     }
-    // }
 }
