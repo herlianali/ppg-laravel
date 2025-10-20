@@ -76,7 +76,7 @@
                                     <th class="text-white">No. HP</th>
                                     <th class="text-white">Asal PT</th>
                                     <th class="text-white">Bidang Study</th>
-                                    <th class="text-white">Status Verifikasi</th>
+                                    <th class="text-white">Status Verifikasi asdasdasd</th>
                                     <th class="text-white">Tanggal Daftar</th>
                                     <th class="text-white text-center" width="120">Aksi</th>
                                 </tr>

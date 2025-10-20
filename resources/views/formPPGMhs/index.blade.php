@@ -17,7 +17,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nama Lengkap</th>
-                                    <th>NIM</th>
+                                    <th>Simpkb ID</th>
                                     <th>Tanggal</th>
                                     <th>Status Verifikasi</th>
                                     <th>Aksi</th>
@@ -28,15 +28,31 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $lapor->nama_lengkap }}</td>
-                                        <td>{{ $lapor->nim ?? '-' }}</td>
+                                        <td>{{ $lapor->simpkb_id ?? '-' }}</td>
                                         <td>{{ $lapor->created_at->format('d M Y') }}</td>
                                         <td>
-                                            @if ($lapor->status_verifikasi === 'disetujui')
-                                                <span class="badge bg-success">Disetujui</span>
-                                            @elseif($lapor->status_verifikasi === 'ditolak')
-                                                <span class="badge bg-danger">Ditolak</span>
-                                            @else
-                                                <span class="badge bg-secondary">Menunggu</span>
+                                            @php
+                                                $statusConfig = [
+                                                    'diproses' => ['bg-secondary', 'fas fa-clock', 'Diproses'],
+                                                    'diterima' => ['bg-success', 'fas fa-check', 'Diterima'],
+                                                    'ditolak' => ['bg-danger', 'fas fa-times', 'Ditolak'],
+                                                    'revisi' => [
+                                                        'bg-warning',
+                                                        'fas fa-exclamation-triangle',
+                                                        'Perlu Revisi',
+                                                    ],
+                                                ];
+                                                $status = $lapor->verifikasi->status;
+                                                $config = $statusConfig[$status] ?? $statusConfig['diproses'];
+                                            @endphp
+                                            <span class="badge {{ $config[0] }}">
+                                                <i class="{{ $config[1] }} me-1"></i>{{ $config[2] }}
+                                            </span>
+                                            @if ($lapor->verifikasi->created_at)
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ \Carbon\Carbon::parse($lapor->verifikasi->created_at)->format('d M Y') }}
+                                                </small>
                                             @endif
                                         </td>
                                         <td>

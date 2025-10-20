@@ -32,7 +32,7 @@ class HomeController extends Controller
     {
         $totalUsers = User::count();
         $totalLaporDiri = LaporDiri::count();
-        
+
         // Statistik berdasarkan status verifikasi
         $statistikVerifikasi = [
             'diproses' => LaporDiri::menungguVerifikasi()->count(),
@@ -71,7 +71,7 @@ class HomeController extends Controller
     private function getMahasiswaData()
     {
         $user = Auth::user();
-        
+
         // Ambil data milik user yang login
         $totalPengajuan = LaporDiri::where('user_id', $user->id)->count();
         $statusTerakhir = LaporDiri::with('verifikasi')
@@ -84,6 +84,7 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+        // dd($statusTerakhir->verifikasi->status);
         return [
             'totalPengajuan' => $totalPengajuan,
             'statusTerakhir' => $statusTerakhir,
@@ -96,12 +97,12 @@ class HomeController extends Controller
         // Data chart berdasarkan bulan
         $currentYear = date('Y');
         $monthlyData = [];
-        
+
         for ($i = 1; $i <= 6; $i++) {
             $month = date('M', mktime(0, 0, 0, $i, 1, $currentYear));
             $count = LaporDiri::whereYear('created_at', $currentYear)
-                             ->whereMonth('created_at', $i)
-                             ->count();
+                ->whereMonth('created_at', $i)
+                ->count();
             $monthlyData[$month] = $count;
         }
 

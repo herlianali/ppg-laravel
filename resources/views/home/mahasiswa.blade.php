@@ -47,7 +47,7 @@
                         </div>
                         <span class="fw-semibold d-block mb-1">Status Terakhir</span>
                         <h3 class="card-title mb-2">
-                            @if ($statusTerakhir)
+                            @if ($statusTerakhir->verifikasi->status === 'diterima')
                                 <span class="badge bg-success">Terverifikasi</span>
                             @else
                                 <span class="badge bg-secondary">Belum Ada</span>
@@ -107,8 +107,8 @@
                                                 <small class="text-muted">
                                                     Status:
                                                     <span
-                                                        class="badge bg-{{ $pengajuan->status == 'diverifikasi' ? 'success' : ($pengajuan->status == 'ditolak' ? 'danger' : 'warning') }}">
-                                                        {{ $pengajuan->status ?? 'Menunggu' }}
+                                                        class="badge bg-{{ $pengajuan->verifikasi->status == 'diterima' ? 'success' : ($pengajuan->verifikasi->status == 'ditolak' ? 'danger' : 'warning') }}">
+                                                        {{ $pengajuan->verifikasi->status ?? 'Menunggu' }}
                                                     </span>
                                                 </small>
                                             </div>
@@ -208,9 +208,9 @@
                             <a href="" class="btn btn-outline-primary">
                                 <i class="fas fa-list me-2"></i>Lihat Data Saya
                             </a>
-                            <a href="" class="btn btn-outline-success">
+                            {{-- <a href="" class="btn btn-outline-success">
                                 <i class="fas fa-book me-2"></i>Info PPL
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
                 </div>
