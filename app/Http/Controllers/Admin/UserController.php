@@ -35,7 +35,6 @@ class UserController extends Controller
             'email'    => 'required',
             'password' => 'required|min:6',
             'role'     => 'required|in:admin,verifikator,mahasiswa',
-            'simpkb_id' => 'required'
         ]);
 
         User::create([
@@ -62,7 +61,6 @@ class UserController extends Controller
             'name'  => 'required|string|max:255',
             'email' => 'required|',
             'role'  => 'required|in:admin,verifikator,mahasiswa',
-            'simpkb_id' => 'required'
         ]);
 
         $user->update([
