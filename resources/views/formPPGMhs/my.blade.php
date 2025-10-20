@@ -12,11 +12,13 @@
                             <i class="fas fa-user-circle me-2"></i>Detail Data Lapor Diri -
                             {{ $lapor->nama_lengkap }}
                         </h5>
-                        <div>
-                            <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit me-1"></i> Edit
-                            </a>
-                        </div>
+                        @if ($lapor->verifikasi->status === 'revisi')
+                            <div>
+                                <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="card-body mt-4">
@@ -39,10 +41,12 @@
                                 <h6 class="mb-0">
                                     <i class="fas fa-user-check me-2"></i>Verifikasi Data oleh Verifikator
                                 </h6>
-                                @if ($lapor->status_verifikasi === 'disetujui')
+                                @if ($lapor->verifikasi->status === 'diterima')
                                     <span class="badge bg-success">Disetujui</span>
-                                @elseif ($lapor->status_verifikasi === 'ditolak')
-                                    <span class="badge bg-danger">Ditolak</span>
+                                @elseif ($lapor->verifikasi->status === 'revisi')
+                                    <span class="badge bg-warning">Direvisi</span>
+                                @elseif ($lapor->verifikasi->status === 'ditolak')
+                                    <span class="badge bg-danger">Direvisi</span>
                                 @else
                                     <span class="badge bg-secondary">Belum Diverifikasi</span>
                                 @endif
@@ -51,7 +55,7 @@
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold text-muted">Catatan Verifikator</label>
                                     <p class="form-control-static">
-                                        {{ $lapor->catatan_verifikator ?? '-' }}
+                                        {{ $lapor->verifikasi->komentar ?? '-' }}
                                     </p>
                                 </div>
 
@@ -63,7 +67,7 @@
                                         <div class="mb-3">
                                             <label for="catatan" class="form-label fw-semibold">Tulis Catatan</label>
                                             <textarea name="catatan_verifikator" id="catatan" rows="3" class="form-control"
-                                                placeholder="Catatan hasil verifikasi...">{{ $lapor->catatan_verifikator ?? '' }}</textarea>
+                                                placeholder="Catatan hasil verifikasi...">{{ $lapor->verifikasi->komentar ?? '' }}</textarea>
                                         </div>
                                         <div class="d-flex gap-2">
                                             <button type="submit" name="status" value="disetujui" class="btn btn-success">
@@ -86,6 +90,12 @@
                                 </h6>
                             </div>
                             <div class="section-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label fw-semibold text-muted">Simpkb ID</label>
+                                        <p class="form-control-static">{{ $lapor->simpkb_id }}</p>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-semibold text-muted">Nama Lengkap</label>
@@ -382,17 +392,20 @@
                                 </small>
                             </div>
                             <div>
-                                <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit me-1"></i> Edit Data
-                                </a>
-                                <form action="{{ route('lapor.destroy', $lapor->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                        <i class="fas fa-trash me-1"></i> Hapus
-                                    </button>
-                                </form>
+                                @if (auth()->user()->role === 'admin')
+                                    <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning">
+                                        <i class="fas fa-edit me-1"></i> Edit Data
+                                    </a>
+                                    <form action="{{ route('lapor.destroy', $lapor->id) }}" method="POST"
+                                        class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger"
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                            <i class="fas fa-trash me-1"></i> Hapus
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>

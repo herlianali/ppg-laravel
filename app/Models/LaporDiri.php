@@ -16,6 +16,7 @@ class LaporDiri extends Model
         'user_id',
 
         // Step 1: Biodata
+        'simpkb_id',
         'nama_lengkap',
         'tempat_lahir',
         'tanggal_lahir',
@@ -24,10 +25,12 @@ class LaporDiri extends Model
         'no_kk',
         'nuptk',
         'asal_pt',
+        'asal_prodi',
         'ipk',
         'no_hp',
         'email',
         'bidang_studi',
+        'abk',
 
         // Step 2: Alamat
         'alamat',
@@ -40,6 +43,12 @@ class LaporDiri extends Model
         // Step 3: Orang Tua
         'nama_ayah',
         'nama_ibu',
+        'nik_ayah',
+        'nik_ibu',
+        'gaji_ayah',
+        'gaji_ibu',
+        'pekerjaan_ayah',
+        'pekerjaan_ibu',
         'tgl_lahir_ayah',
         'tgl_lahir_ibu',
         'pendidikan_ayah',

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LaporVervalIdController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
@@ -41,6 +42,11 @@ Route::middleware(['auth', 'check.menu'])->group(function () {
     Route::get('/lapor/my/{id}', [LaporDiriController::class, 'showMyData'])->name('lapor.my.show');
 
     // =======================
+    // LAPOR DIRI VERVAL ID (Admin)
+    // =======================
+    Route::get('/lapor/admin', [LaporVervalIdController::class, 'index'])->name('lapor.admin.index');
+
+    // =======================
     // LAPOR DIRI (Mahasiswa)
     // =======================
     Route::get('/lapor/create', [LaporDiriController::class, 'create'])->name('lapor.create');
@@ -49,11 +55,6 @@ Route::middleware(['auth', 'check.menu'])->group(function () {
     Route::get('/lapor/{id}/edit', [LaporDiriController::class, 'edit'])->name('lapor.edit');
     Route::put('/lapor/{id}', [LaporDiriController::class, 'update'])->name('lapor.update');
     Route::delete('/lapor/{id}', [LaporDiriController::class, 'destroy'])->name('lapor.destroy');
-
-    // =======================
-    // LAPOR DIRI VERVAL ID (Admin)
-    // =======================
-    Route::get('/lapor/admin', [LaporDiriController::class, 'index'])->name('lapor.admin.index');
 
     // =======================
     // MENU MANAGEMENT (Admin)

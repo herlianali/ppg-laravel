@@ -18,6 +18,7 @@ class User extends Authenticatable
         'role',
         'phone',
         'address',
+        'simpkb_id'
     ];
 
     protected $hidden = [

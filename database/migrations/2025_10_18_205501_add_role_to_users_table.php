@@ -12,13 +12,14 @@ return new class extends Migration
             $table->enum('role', ['admin', 'verifikator', 'mahasiswa'])->default('mahasiswa');
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
+            $table->string('simpkb_id')->nullable();
         });
     }
 
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'phone', 'address']);
+            $table->dropColumn(['role', 'phone', 'address', 'simpkb_id']);
         });
     }
 };

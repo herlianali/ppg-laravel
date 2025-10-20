@@ -64,6 +64,12 @@
                             </div>
                             <div class="section-body">
                                 <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label fw-semibold text-muted">Simpkb ID</label>
+                                        <p class="form-control-static">{{ $lapor->simpkb_id }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-semibold text-muted">Nama Lengkap</label>
                                         <p class="form-control-static">{{ $lapor->nama_lengkap }}</p>
@@ -363,15 +369,17 @@
                                     <a href="{{ route('lapor.edit', $lapor->id) }}" class="btn btn-warning">
                                         <i class="fas fa-edit me-1"></i> Edit Data
                                     </a>
-                                    <form action="{{ route('lapor.destroy', $lapor->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                            <i class="fas fa-trash me-1"></i> Hapus
-                                        </button>
-                                    </form>
+                                    @if (auth()->user()->role === 'admin')
+                                        <form action="{{ route('lapor.destroy', $lapor->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger"
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                <i class="fas fa-trash me-1"></i> Hapus
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             @endif
                         </div>

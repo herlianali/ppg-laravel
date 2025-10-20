@@ -105,6 +105,7 @@ class LaporDiriController extends Controller
         // Validasi lengkap semua field
         $validationRules = [
             // Step 1: Biodata
+            'simpkb_id' => 'required|string',
             'nama_lengkap' => 'required|string|max:255',
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -113,10 +114,12 @@ class LaporDiriController extends Controller
             'no_kk' => 'nullable|string|max:16',
             'nuptk' => 'nullable|string|max:50',
             'asal_pt' => 'nullable|string|max:255',
+            'asal_prodi' => 'nullable|string|max:255',
             'ipk' => 'nullable|numeric|min:0|max:4',
             'no_hp' => 'nullable|string|max:15',
             'email' => 'required|email|max:255',
             'bidang_studi' => 'required|string',
+            'abk' => 'nullable|string',
 
             // Step 2: Alamat
             'alamat' => 'nullable|string|max:500',
@@ -129,6 +132,12 @@ class LaporDiriController extends Controller
             // Step 3: Orang Tua
             'nama_ayah' => 'nullable|string|max:255',
             'nama_ibu' => 'nullable|string|max:255',
+            'nik_ayah' => 'nullable|string|max:255',
+            'nik_ibu' => 'nullable|string|max:255',
+            'gaji_ayah' => 'nullable|string|max:255',
+            'gaji_ibu' => 'nullable|string|max:255',
+            'pekerjaan_ayah' => 'nullable|string|max:255',
+            'pekerjaan_ibu' => 'nullable|string|max:255',
             'tgl_lahir_ayah' => 'nullable|date',
             'tgl_lahir_ibu' => 'nullable|date',
             'pendidikan_ayah' => 'nullable|string|max:100',
@@ -282,6 +291,7 @@ class LaporDiriController extends Controller
 
         $request->validate([
             // Validasi sama seperti store, tapi file tidak required
+            'simpkb_id' => 'required|string',
             'nama_lengkap' => 'required|string|max:255',
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -290,10 +300,12 @@ class LaporDiriController extends Controller
             'no_kk' => 'nullable|string|max:16',
             'nuptk' => 'nullable|string|max:50',
             'asal_pt' => 'nullable|string|max:255',
+            'asal_prodi' => 'nullable|string|max:255',
             'ipk' => 'nullable|numeric|min:0|max:4',
             'no_hp' => 'nullable|string|max:15',
             'email' => 'required|email|max:255',
             'bidang_studi' => 'required|string',
+            'abk' => 'nullable|string',
             'alamat' => 'nullable|string|max:500',
             'kelurahan' => 'nullable|string|max:100',
             'kecamatan' => 'nullable|string|max:100',
@@ -302,6 +314,12 @@ class LaporDiriController extends Controller
             'kode_pos' => 'nullable|string|max:10',
             'nama_ayah' => 'nullable|string|max:255',
             'nama_ibu' => 'nullable|string|max:255',
+            'nik_ayah' => 'nullable|string|max:255',
+            'nik_ibu' => 'nullable|string|max:255',
+            'gaji_ayah' => 'nullable|string|max:255',
+            'gaji_ibu' => 'nullable|string|max:255',
+            'pekerjaan_ayah' => 'nullable|string|max:255',
+            'pekerjaan_ibu' => 'nullable|string|max:255',
             'tgl_lahir_ayah' => 'nullable|date',
             'tgl_lahir_ibu' => 'nullable|date',
             'pendidikan_ayah' => 'nullable|string|max:100',
@@ -370,7 +388,7 @@ class LaporDiriController extends Controller
 
             $lapor->update($data);
 
-            return redirect()->route('lapor.index')
+            return redirect()->route('lapor.my.index')
                 ->with('success', 'Data berhasil diperbarui!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -533,6 +551,7 @@ class LaporDiriController extends Controller
         // Ambil data Verifikasi jika ada
         $verifikasi = Verifikasi::where('lapor_diri_id', $id)->first();
 
+        // dd($verifikasi);
         return view('formPPGMhs.my', compact('lapor', 'verifikasi'));
     }
 

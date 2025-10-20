@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             // Step 1: Biodata Pribadi
+            $table->string('simpkb_id');
             $table->string('nama_lengkap');
             $table->string('tempat_lahir')->nullable();
             $table->date('tanggal_lahir');
@@ -23,7 +24,9 @@ return new class extends Migration
             $table->string('no_kk', 16)->nullable();
             $table->string('nuptk')->nullable();
             $table->string('asal_pt')->nullable();
+            $table->string('asal_prodi')->nullable();
             $table->string('bidang_studi')->nullable();
+            $table->string('abk')->nullable();
             $table->decimal('ipk', 3, 2)->nullable();
             $table->string('no_hp')->nullable();
             $table->string('email')->nullable();
@@ -39,6 +42,12 @@ return new class extends Migration
             // Step 3: Data Orang Tua
             $table->string('nama_ayah')->nullable();
             $table->string('nama_ibu')->nullable();
+            $table->string('nik_ayah')->nullable();
+            $table->string('nik_ibu')->nullable();
+            $table->string('gaji_ayah')->nullable();
+            $table->string('gaji_ibu')->nullable();
+            $table->string('pekerjaan_ayah')->nullable();
+            $table->string('pekerjaan_ibu')->nullable();
             $table->date('tgl_lahir_ayah')->nullable();
             $table->date('tgl_lahir_ibu')->nullable();
             $table->string('pendidikan_ayah')->nullable();
