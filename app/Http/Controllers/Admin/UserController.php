@@ -35,6 +35,7 @@ class UserController extends Controller
             'email'    => 'required',
             'password' => 'required|min:6',
             'role'     => 'required|in:admin,verifikator,mahasiswa',
+            'simpkb_id' => 'required'
         ]);
 
         User::create([
@@ -44,6 +45,7 @@ class UserController extends Controller
             'role'     => $request->role,
             'phone'    => $request->phone,
             'address'  => $request->address,
+            'simpkb_id' => $request->simpkb_id
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan!');
@@ -60,6 +62,7 @@ class UserController extends Controller
             'name'  => 'required|string|max:255',
             'email' => 'required|',
             'role'  => 'required|in:admin,verifikator,mahasiswa',
+            'simpkb_id' => 'required'
         ]);
 
         $user->update([
@@ -68,6 +71,7 @@ class UserController extends Controller
             'role'    => $request->role,
             'phone'   => $request->phone,
             'address' => $request->address,
+            'simpkb_id' => $request->simpkb_id,
         ]);
 
         if ($request->filled('password')) {
