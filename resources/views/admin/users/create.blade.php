@@ -29,7 +29,7 @@
                             </div>
 
                             <!-- Simpkb Id -->
-                            <div class="mb-3">
+                            {{-- <div class="mb-3">
                                 <label for="simpkb_id" class="form-label">Simpkb ID</label>
                                 <input type="text" name="simpkb_id" id="simpkb_id"
                                     class="form-control @error('simpkb_id') is-invalid @enderror"
@@ -37,7 +37,7 @@
                                 @error('simpkb_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <!-- Email -->
                             <div class="mb-3">

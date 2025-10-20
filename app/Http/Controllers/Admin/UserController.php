@@ -45,7 +45,7 @@ class UserController extends Controller
             'role'     => $request->role,
             'phone'    => $request->phone,
             'address'  => $request->address,
-            'simpkb_id' => $request->simpkb_id
+            'simpkb_id' => $request->email
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan!');
@@ -71,7 +71,7 @@ class UserController extends Controller
             'role'    => $request->role,
             'phone'   => $request->phone,
             'address' => $request->address,
-            'simpkb_id' => $request->simpkb_id,
+            'simpkb_id' => $request->email,
         ]);
 
         if ($request->filled('password')) {
