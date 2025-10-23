@@ -7,9 +7,16 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Data Lapor Diri yang Sudah Divalidasi</h5>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Data Lapor Diri yang Sudah Divalidasi</h5>
+
+                        {{-- Tombol Export --}}
+                        <a href="{{ route('lapor.admin.export', ['format' => 'xlsx']) }}" 
+                           class="btn btn-success btn-sm">
+                            <i class="fas fa-file-excel me-1"></i> Export Excel
+                        </a>
                     </div>
+
                     <div class="card-body">
                         @if ($vervalLapor->count() > 0)
                             <div class="table-responsive">
@@ -21,7 +28,6 @@
                                             <th>Nama Lengkap</th>
                                             <th>NUPTK</th>
                                             <th>Status</th>
-                                            {{-- <th>Aksi</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -36,19 +42,13 @@
                                                         {{ $item->verifikasi->status ?? 'diterima' }}
                                                     </span>
                                                 </td>
-                                                {{-- <td>
-                                                    <a href="{{ route('lapor.show', $item->id) }}"
-                                                        class="btn btn-info btn-sm">
-                                                        <i class="fas fa-eye"></i> Detail
-                                                    </a>
-                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
 
-                            <!-- Jika menggunakan pagination -->
+                            {{-- Pagination jika ada --}}
                             @if (method_exists($vervalLapor, 'links'))
                                 <div class="mt-3">
                                     {{ $vervalLapor->links() }}

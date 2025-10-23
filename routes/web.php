@@ -16,7 +16,9 @@ use App\Http\Controllers\MahasiswaController;
 // =======================
 Route::get('/', fn() => redirect('/login'));
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+Route::get('/login/office', [LoginController::class, 'showLoginFormAdmin'])->name('login.office');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/login/office', [LoginController::class, 'login'])->name('login.office.post');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // =======================
@@ -35,6 +37,7 @@ Route::middleware(['auth', 'check.menu'])->group(function () {
     // VERIFIKASI (Admin & Verifikator)
     // =======================
     Route::get('/verifikasi', [VerifikasiController::class, 'listVerifikasi'])->name('verifikasi.index');
+    Route::get('/verifikasi/export/{format}', [VerifikasiController::class, 'export'])->name('verifikasi.export');
     Route::post('/lapor/{id}/verifikasi', [VerifikasiController::class, 'verifikasi'])->name('lapor.verifikasi');
 
     // Data Saya
@@ -45,6 +48,7 @@ Route::middleware(['auth', 'check.menu'])->group(function () {
     // LAPOR DIRI VERVAL ID (Admin)
     // =======================
     Route::get('/lapor/admin', [LaporVervalIdController::class, 'index'])->name('lapor.admin.index');
+    Route::get('/lapor/admin/export/{format}', [LaporVervalIdController::class, 'export'])->name('lapor.admin.export');
 
     // =======================
     // LAPOR DIRI (Mahasiswa)

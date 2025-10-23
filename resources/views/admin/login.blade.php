@@ -107,15 +107,15 @@
                         @endif
 
                         <!-- Login Form -->
-                        <form id="formAuthentication" class="mb-3" action="{{ route('login.post') }}" method="POST">
+                        <form id="formAuthentication" class="mb-3" action="{{ route('login.office.post') }}" method="POST">
                             @csrf
 
                             <div class="mb-3">
-                                <label for="simpkb_id" class="form-label">Simpkb ID</label>
+                                <label for="email" class="form-label">Email</label>
                                 <input type="text" class="form-control @error('email') is-invalid @enderror"
-                                    id="simpkb_id" name="simpkb_id" placeholder="Masukkan simpkb id Anda"
-                                    value="{{ old('simpkb_id') }}" autofocus required />
-                                @error('simpkb_id')
+                                    id="email" name="email" placeholder="Masukkan email Anda"
+                                    value="{{ old('email') }}" autofocus required />
+                                @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

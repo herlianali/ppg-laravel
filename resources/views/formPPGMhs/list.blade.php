@@ -11,10 +11,24 @@
                         <i class="fas fa-list me-2"></i>Data Lapor Diri PPG Tahap 3 Tahun 2025
                     </h5>
                     @if (Auth::user()->role === 'admin')
-                        <div>
-                            <a href="{{ route('verifikasi.index') }}" class="btn btn-info btn-sm me-2">
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('verifikasi.index') }}" class="btn btn-info btn-sm">
                                 <i class="fas fa-clipboard-list me-1"></i> List Verifikasi
                             </a>
+
+                            <a href="{{ route('verifikasi.export', ['format' => 'xlsx']) }}" 
+                                id="exportExcel" 
+                                class="btn btn-warning btn-sm">
+                                <i class="fas fa-file-excel me-1"></i> Export Excel
+                            </a>
+
+                            <a href="{{ route('verifikasi.export', ['format' => 'csv']) }}" 
+                                id="exportCsv" 
+                                class="btn btn-warning btn-sm">
+                                <i class="fas fa-file-csv me-1"></i> Export CSV
+                            </a>
+
+
                             <a href="{{ route('lapor.create') }}" class="btn btn-light btn-sm">
                                 <i class="fas fa-plus me-1"></i> Tambah Data
                             </a>
@@ -249,6 +263,28 @@
                 statusFilter.value = '';
                 filterTable();
             });
+            // Export filter data
+            const exportExcel = document.getElementById('exportExcel');
+            const exportCsv = document.getElementById('exportCsv');
+
+            function updateExportLinks() {
+                const searchValue = encodeURIComponent(searchInput.value.trim());
+                const statusValue = encodeURIComponent(statusFilter.value.trim());
+
+                const query = `?search=${searchValue}&status=${statusValue}`;
+
+                exportExcel.href = "{{ route('verifikasi.export', ['format' => 'xlsx']) }}" + query;
+                exportCsv.href = "{{ route('verifikasi.export', ['format' => 'csv']) }}" + query;
+            }
+
+            // Update link setiap kali filter berubah
+            searchInput.addEventListener('input', updateExportLinks);
+            statusFilter.addEventListener('change', updateExportLinks);
+            resetFilter.addEventListener('click', updateExportLinks);
+
+            // Jalankan sekali di awal
+            updateExportLinks();
+
         });
     </script>
 @endsection

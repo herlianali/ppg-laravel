@@ -7,6 +7,8 @@ use App\Models\Verifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\LaporDiriExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VerifikasiController extends Controller
 {
@@ -73,6 +75,33 @@ class VerifikasiController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('formPPGMhs.list', compact('lapor'));
+        $laporDownload = LaporDiri::all();
+
+        return view('formPPGMhs.list', compact('lapor', 'laporDownload'));
     }
+
+    public function export(Request $request, $format)
+    {
+        $search = $request->query('search');
+        $status = $request->query('status');
+
+        $query = Verifikasi::with('laporDiri');
+
+        if ($search) {
+            $query->whereHas('laporDiri', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%");
+            });
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $data = $query->get();
+
+        return Excel::download(new LaporDiriExport($data), "lapor_diri.$format");
+    }
+
+
 }

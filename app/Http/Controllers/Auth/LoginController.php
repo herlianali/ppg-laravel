@@ -14,34 +14,62 @@ class LoginController extends Controller
         return view('login');
     }
 
+    public function showLoginFormAdmin()
+    {
+        return view('admin.login');
+    }
+
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+        // Deteksi apakah login mahasiswa atau admin berdasarkan input
+        $isMahasiswaLogin = $request->has('simpkb_id');
+        if ($isMahasiswaLogin) {
+            // Validasi login mahasiswa
+            $request->validate([
+                'simpkb_id' => 'required',
+                'password' => 'required',
+            ]);
 
-        $credentials = $request->only('email', 'password');
-        $remember = $request->has('remember');
+            $credentials = [
+                'simpkb_id' => $request->simpkb_id,
+                'password' => $request->password,
+            ];
+        } else {
+            // Validasi login admin/verifikator
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+            $credentials = [
+                'email' => $request->email,
+                'password' => $request->password,
+            ];
+        }
+
+        $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            // Redirect berdasarkan role
             $user = Auth::user();
-            if ($user->isAdmin() || $user->isVerifikator()) {
+
+            // Redirect berdasarkan role
+            if ($user->role === 'admin' || $user->role === 'verifikator') {
                 return redirect()->route('home.index');
-            } elseif ($user->isMahasiswa()) {
+            } elseif ($user->role === 'mahasiswa') {
                 return redirect()->route('lapor.create');
             }
 
             return redirect()->intended('/home');
         }
 
+        // Error message sesuai jenis login
         throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
+            $isMahasiswaLogin ? 'simpkb_id' : 'email' => __('auth.failed'),
         ]);
     }
+
 
     public function logout(Request $request)
     {
